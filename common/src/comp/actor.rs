@@ -20,9 +20,19 @@ pub enum BodyType {
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum Head {
-    Human,
-    Elf,
-    Dwarf,
+
+    OrcMale,
+    OrcFemale,
+    HumanMale,
+    HumanFemale,
+    ElfMale,
+    ElfFemale,
+    DwarfMale,
+    DwarfFemale,
+    UndeadMale,
+    UndeadFemale,
+    DanariMale,
+    DanariFemale,
 }
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum Hair {
@@ -40,7 +50,6 @@ pub enum Beard {
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum Chest {
-    None,
     Blue,
     Brown,
     Dark,
@@ -65,7 +74,6 @@ pub enum Belt {
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum Pants {
-    None,
     Blue,
     Brown,
     Dark,
@@ -80,7 +88,6 @@ pub enum Hand {
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum Foot {
-    None,
     Dark,
 }
 
@@ -190,15 +197,26 @@ pub const ALL_RACES: [Race; 6] = [
     Race::Undead,
 ];
 pub const ALL_BODY_TYPES: [BodyType; 3] = [BodyType::Female, BodyType::Male, BodyType::Unspecified];
-pub const ALL_HEADS: [Head; 3] = [Head::Human, Head::Elf, Head::Dwarf];
+pub const ALL_HEADS: [Head; 12] = [
+    Head::OrcMale,
+    Head::OrcFemale, 
+    Head::HumanMale,
+    Head::HumanFemale,
+    Head::ElfMale,
+    Head::ElfFemale,
+    Head::DwarfMale,
+    Head::DwarfFemale,
+    Head::UndeadMale,
+    Head::UndeadFemale,
+    Head::DanariMale,
+    Head::DanariFemale];
 pub const ALL_HAIR: [Hair; 1] = [Hair::HumanMale1];
 pub const ALL_BEARD: [Beard; 2] = [
     Beard::None, 
     Beard::Human1
     ];
 pub const ALL_EYES: [Eyes; 1] = [Eyes::Eyes1];
-pub const ALL_CHESTS: [Chest; 6] = [
-    Chest::None,
+pub const ALL_CHESTS: [Chest; 5] = [
     Chest::Blue,
     Chest::Brown,
     Chest::Dark,
@@ -211,8 +229,7 @@ pub const ALL_BELTS: [Belt; 1] = [
     //Belt::Default,
     Belt::Dark,
 ];
-pub const ALL_PANTS: [Pants; 6] = [
-    Pants::None,
+pub const ALL_PANTS: [Pants; 5] = [
     Pants::Blue,
     Pants::Brown,
     Pants::Dark,
@@ -220,7 +237,7 @@ pub const ALL_PANTS: [Pants; 6] = [
     Pants::Orange,
 ];
 pub const ALL_HANDS: [Hand; 1] = [Hand::Default];
-pub const ALL_FEET: [Foot; 2] = [Foot::None, Foot::Dark];
+pub const ALL_FEET: [Foot; 1] = [Foot::Dark];
 pub const ALL_WEAPONS: [Weapon; 7] = [
     Weapon::Daggers,
     Weapon::SwordShield,
