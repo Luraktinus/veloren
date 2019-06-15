@@ -1,20 +1,14 @@
 pub mod attack;
-pub mod cidle;
-pub mod crun;
 pub mod gliding;
 pub mod idle;
 pub mod jump;
-pub mod roll;
 pub mod run;
 
 // Reexports
 pub use self::attack::AttackAnimation;
-pub use self::cidle::CidleAnimation;
-pub use self::crun::CrunAnimation;
 pub use self::gliding::GlidingAnimation;
 pub use self::idle::IdleAnimation;
 pub use self::jump::JumpAnimation;
-pub use self::roll::RollAnimation;
 pub use self::run::RunAnimation;
 
 use super::{Bone, Skeleton};
@@ -38,7 +32,6 @@ pub struct CharacterSkeleton {
     draw: Bone,
     left_equip: Bone,
     right_equip: Bone,
-    hair: Bone,
     torso: Bone,
 }
 
@@ -59,7 +52,6 @@ impl CharacterSkeleton {
             draw: Bone::default(),
             left_equip: Bone::default(),
             right_equip: Bone::default(),
-            hair: Bone::default(),
             torso: Bone::default(),
 
         }
@@ -78,8 +70,8 @@ impl Skeleton for CharacterSkeleton {
             FigureBoneData::new(torso_mat * chest_mat),
             FigureBoneData::new(torso_mat * self.belt.compute_base_matrix()),
             FigureBoneData::new(torso_mat * self.shorts.compute_base_matrix()),
-            FigureBoneData::new(torso_mat * l_hand_mat),
-            FigureBoneData::new(torso_mat * self.r_hand.compute_base_matrix()),
+            FigureBoneData::new(l_hand_mat),
+            FigureBoneData::new(self.r_hand.compute_base_matrix()),
             FigureBoneData::new(torso_mat * self.l_foot.compute_base_matrix()),
             FigureBoneData::new(torso_mat * self.r_foot.compute_base_matrix()),
             FigureBoneData::new(torso_mat * chest_mat * weapon_mat),
@@ -88,8 +80,10 @@ impl Skeleton for CharacterSkeleton {
             FigureBoneData::new(torso_mat * self.draw.compute_base_matrix()),
             FigureBoneData::new(self.left_equip.compute_base_matrix()),
             FigureBoneData::new(self.right_equip.compute_base_matrix()),
-            FigureBoneData::new(torso_mat * head_mat * self.hair.compute_base_matrix()),
             FigureBoneData::new(torso_mat),
+            FigureBoneData::default(),
+
+
         ]
     }
 
@@ -108,7 +102,6 @@ impl Skeleton for CharacterSkeleton {
         self.draw.interpolate(&target.draw);
         self.left_equip.interpolate(&target.left_equip);
         self.right_equip.interpolate(&target.right_equip);
-        self.hair.interpolate(&target.hair);
         self.torso.interpolate(&target.torso);
     }
 }
