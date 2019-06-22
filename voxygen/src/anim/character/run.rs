@@ -1,5 +1,4 @@
-use super::{super::Animation, CharacterSkeleton};
-use std::f32::consts::PI;
+use super::{super::{Animation, SkeletonAttr}, CharacterSkeleton};
 use std::ops::Mul;
 use vek::*;
 
@@ -13,6 +12,7 @@ impl Animation for RunAnimation {
         skeleton: &Self::Skeleton,
         (velocity, global_time): Self::Dependency,
         anim_time: f64,
+        skeleton_attr: &SkeletonAttr,
     ) -> Self::Skeleton {
         let mut next = (*skeleton).clone();
 

@@ -2,7 +2,9 @@ use crate::{
     anim::{
         character::{CharacterSkeleton, IdleAnimation},
         fixture::FixtureSkeleton,
-        Animation, Skeleton,
+        Animation,
+        Skeleton,
+        SkeletonAttr,
     },
     render::{
         create_pp_mesh, create_skybox_mesh, Consts, FigurePipeline, Globals, Model,
@@ -76,7 +78,7 @@ impl Scene {
         &self.globals
     }
 
-    pub fn maintain(&mut self, renderer: &mut Renderer, client: &Client) {
+    pub fn maintain(&mut self, renderer: &mut Renderer, client: &Client, body: HumanoidBody) {
         self.camera.set_focus_pos(Vec3::unit_z() * 2.0);
         self.camera.update(client.state().get_time());
         self.camera.set_distance(4.2);
@@ -107,6 +109,7 @@ impl Scene {
             self.figure_state.skeleton_mut(),
             client.state().get_time(),
             client.state().get_time(),
+            &SkeletonAttr::from(&body),
         );
         self.figure_state.skeleton_mut().interpolate(&tgt_skeleton);
 
@@ -121,11 +124,11 @@ impl Scene {
     pub fn render(&mut self, renderer: &mut Renderer, client: &Client, body: HumanoidBody) {
         renderer.render_skybox(&self.skybox.model, &self.globals, &self.skybox.locals);
 
-        let model = self.figure_model_cache.get_or_create_model(
+        let model = &self.figure_model_cache.get_or_create_model(
             renderer,
             comp::Body::Humanoid(body),
             client.get_tick(),
-        );
+        ).0;
 
         renderer.render_figure(
             model,

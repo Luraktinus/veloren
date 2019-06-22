@@ -1,4 +1,4 @@
-use super::{super::Animation, CharacterSkeleton};
+use super::{super::{Animation, SkeletonAttr}, CharacterSkeleton};
 use std::f32::consts::PI;
 use vek::*;
 
@@ -12,6 +12,7 @@ impl Animation for JumpAnimation {
         skeleton: &Self::Skeleton,
         global_time: f64,
         anim_time: f64,
+        skeleton_attr: &SkeletonAttr,
     ) -> Self::Skeleton {
         let mut next = (*skeleton).clone();
         let wave = (anim_time as f32 * 14.0).sin();

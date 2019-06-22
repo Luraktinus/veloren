@@ -5,6 +5,7 @@ pub mod quadrupedmedium;
 
 use crate::render::FigureBoneData;
 use vek::*;
+use common::comp::actor::{HumanoidBody, Head};
 
 #[derive(Copy, Clone)]
 pub struct Bone {
@@ -45,6 +46,29 @@ pub trait Skeleton: Send + Sync + 'static {
     fn interpolate(&mut self, target: &Self);
 }
 
+pub struct SkeletonAttr {
+    neck_scale: f32,
+}
+
+impl Default for SkeletonAttr {
+    fn default() -> Self {
+        Self {
+            neck_scale: 1.0,
+        }
+    }
+}
+
+impl<'a> From<&'a HumanoidBody> for SkeletonAttr {
+    fn from(body: &'a HumanoidBody) -> Self {
+        Self {
+            neck_scale: match body.head {
+                Head::Elf => 1.3,
+                _ => 1.0,
+            },
+        }
+    }
+}
+
 pub trait Animation {
     type Skeleton;
     type Dependency;
@@ -54,5 +78,6 @@ pub trait Animation {
         skeleton: &Self::Skeleton,
         dependency: Self::Dependency,
         anim_time: f64,
+        skeleton_attr: &SkeletonAttr,
     ) -> Self::Skeleton;
 }
