@@ -461,13 +461,13 @@ impl<'a> Widget for SettingsWindow<'a> {
             \n\
             Chat commands:  \n\
             \n\
-            /alias [Name] - Change your Chat Name   \n\
-            /tp [Name] - Teleports you to another player    \n\
+            /alias [name] - Change your Chat Name   \n\
+            /tp [name] - Teleports you to another player    \n\
             /jump <dx> <dy> <dz> - Offset your position \n\
             /goto <x> <y> <z> - Teleport to a position  \n\
-            /kill - Kill yourself   \n\
-            /pig - Spawn pig NPC    \n\
-            /wolf - Spawn wolf NPC  \n\
+            /kill - Kill yourself   \n\            
+            /spawn <hostile/friendly> <npc-name> <amount> - Spawn NPC  \n\
+            /time <day/night> - Sets time of day \n\
             /help - Display chat commands
             ",
             )
