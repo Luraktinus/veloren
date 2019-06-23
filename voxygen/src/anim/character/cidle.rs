@@ -1,4 +1,4 @@
-use super::{super::Animation, CharacterSkeleton};
+use super::{super::{Animation, SkeletonAttr}, CharacterSkeleton};
 use std::{f32::consts::PI, ops::Mul};
 use vek::*;
 
@@ -12,6 +12,7 @@ impl Animation for CidleAnimation {
         skeleton: &Self::Skeleton,
         global_time: f64,
         anim_time: f64,
+        skeleton_attr: &SkeletonAttr,
     ) -> Self::Skeleton {
         let mut next = (*skeleton).clone();
 

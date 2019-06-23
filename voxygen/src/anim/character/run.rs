@@ -1,5 +1,6 @@
 use super::{super::{Animation, SkeletonAttr}, CharacterSkeleton};
 use std::ops::Mul;
+use std::f32::consts::PI;
 use vek::*;
 
 pub struct RunAnimation;

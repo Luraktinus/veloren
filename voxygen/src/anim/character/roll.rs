@@ -1,4 +1,4 @@
-use super::{super::Animation, CharacterSkeleton};
+use super::{super::{Animation, SkeletonAttr}, CharacterSkeleton};
 use std::{f32::consts::PI, ops::Mul};
 use vek::*;
 
@@ -12,6 +12,7 @@ impl Animation for RollAnimation {
         skeleton: &Self::Skeleton,
         global_time: f64,
         anim_time: f64,
+        skeleton_attr: &SkeletonAttr,
     ) -> Self::Skeleton {
         let mut next = (*skeleton).clone();
 
@@ -22,7 +23,7 @@ impl Animation for RollAnimation {
         let wave_slow = (anim_time as f32 * 2.8 + PI).sin();
         let wave_dub = (anim_time as f32 * 5.5).sin();
 
-        next.head.offset = Vec3::new(0.0, 0.0 + wave_slow * -3.0, 9.0 + wave_dub * -5.0);
+        next.head.offset = Vec3::new(0.0, 0.0 + wave_slow * -3.0 + skeleton_attr.neck_forward, skeleton_attr.neck_height + 9.0 + wave_dub * -5.0);
         next.head.ori = Quaternion::rotation_x(wave_dub * -0.4);
         next.head.scale = Vec3::one();
 
@@ -65,7 +66,7 @@ impl Animation for RollAnimation {
         next.r_foot.ori = Quaternion::rotation_x(wave * -0.4);
         next.r_foot.scale = Vec3::one();
 
-        next.weapon.offset = Vec3::new(-7.0, -7.0, 15.0);
+        next.weapon.offset = Vec3::new(-7.0 + skeleton_attr.weapon_x, -5.0 + skeleton_attr.weapon_y, 15.0);
         next.weapon.ori =
             Quaternion::rotation_y(2.5) * Quaternion::rotation_z(1.57 + wave_quick * 1.0);
         next.weapon.scale = Vec3::one();
