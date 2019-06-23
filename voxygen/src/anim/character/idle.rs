@@ -38,7 +38,7 @@ impl Animation for IdleAnimation {
         );
         next.head.offset = Vec3::new(0.0, 0.0 + skeleton_attr.neck_forward, skeleton_attr.neck_height + 15.0 + wave_ultra_slow * 0.3) * skeleton_attr.scaler;
         next.head.ori = Quaternion::rotation_z(head_look.x) * Quaternion::rotation_x(head_look.y);
-        next.head.scale = Vec3::one() * skeleton_attr.scaler;
+        next.head.scale = Vec3::one() * skeleton_attr.scaler * skeleton_attr.head_scale;
 
         next.chest.offset = Vec3::new(0.0, 0.0, 7.0 + wave_ultra_slow * 0.3) * skeleton_attr.scaler;
         next.chest.ori = Quaternion::rotation_x(0.0);
@@ -77,17 +77,17 @@ impl Animation for IdleAnimation {
         next.r_foot.ori = Quaternion::identity();
         next.r_foot.scale = Vec3::one() * skeleton_attr.scaler;
 
-        next.weapon.offset = Vec3::new(-7.0 + skeleton_attr.weapon_x, -5.0 + skeleton_attr.weapon_y, 15.0) * skeleton_attr.scaler;
+        next.weapon.offset = Vec3::new(-7.0 + skeleton_attr.weapon_x, -5.0 + skeleton_attr.weapon_y, 15.0);
         next.weapon.ori = Quaternion::rotation_y(2.5) * Quaternion::rotation_z(1.57);
-        next.weapon.scale = Vec3::one() * skeleton_attr.scaler;
+        next.weapon.scale = Vec3::one();
 
-        next.l_shoulder.offset = Vec3::new(-10.0, -3.2, 2.5) * skeleton_attr.scaler;
+        next.l_shoulder.offset = Vec3::new(-10.0, -3.2, 2.5);
         next.l_shoulder.ori = Quaternion::rotation_x(0.0);
-        next.l_shoulder.scale = Vec3::one() * 1.04 * skeleton_attr.scaler;
+        next.l_shoulder.scale = Vec3::one() * 1.04;
 
-        next.r_shoulder.offset = Vec3::new(0.0, -3.2, 2.5) * skeleton_attr.scaler;
+        next.r_shoulder.offset = Vec3::new(0.0, -3.2, 2.5);
         next.r_shoulder.ori = Quaternion::rotation_x(0.0);
-        next.r_shoulder.scale = Vec3::one() * 1.04 * skeleton_attr.scaler;
+        next.r_shoulder.scale = Vec3::one() * 1.04;
 
         next.draw.offset = Vec3::new(0.0, 5.0, 0.0) * skeleton_attr.scaler;
         next.draw.ori = Quaternion::rotation_y(0.0);

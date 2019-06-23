@@ -48,6 +48,7 @@ pub trait Skeleton: Send + Sync + 'static {
 
 pub struct SkeletonAttr {
     scaler: f32,
+    head_scale: f32,
     neck_height: f32,
     neck_forward: f32,
     weapon_x: f32,
@@ -60,6 +61,7 @@ impl Default for SkeletonAttr {
     fn default() -> Self {
         Self {
             scaler: 1.0,
+            head_scale: 1.0,
             neck_height: 1.0,
             neck_forward: 1.0,
             weapon_x: 1.0,
@@ -72,18 +74,33 @@ impl<'a> From<&'a HumanoidBody> for SkeletonAttr {
     fn from(body: &'a HumanoidBody) -> Self {
         Self {
             scaler: match body.head {
+                Head::OrcMale => 1.15,
+                Head::OrcFemale => 1.05,
+                Head::HumanMale => 1.0, 
+                Head::HumanFemale => 0.95,
+                Head::ElfMale => 1.05,
+                Head::ElfFemale => 0.95,
+                Head::DwarfMale => 0.9,
+                Head::DwarfFemale => 0.9,
+                Head::UndeadMale => 1.0,
+                Head::UndeadFemale => 0.95,
+                Head::DanariMale => 0.9,
+                Head::DanariFemale => 0.95,
+                _ => 1.0,
+            },
+            head_scale: match body.head {
                 Head::OrcMale => 1.0,
                 Head::OrcFemale => 1.0,
                 Head::HumanMale => 1.0, 
                 Head::HumanFemale => 1.0,
-                Head::ElfMale => 1.0,
-                Head::ElfFemale => 1.0,
+                Head::ElfMale => 0.9,
+                Head::ElfFemale => 0.9,
                 Head::DwarfMale => 1.0,
                 Head::DwarfFemale => 1.0,
                 Head::UndeadMale => 1.0,
                 Head::UndeadFemale => 1.0,
-                Head::DanariMale => 1.0,
-                Head::DanariFemale => 1.0,
+                Head::DanariMale => 1.15,
+                Head::DanariFemale => 1.15,
                 _ => 1.0,
             },
             neck_height: match body.head {
@@ -91,7 +108,7 @@ impl<'a> From<&'a HumanoidBody> for SkeletonAttr {
                 Head::OrcFemale => -1.0,
                 Head::HumanMale => -1.0, 
                 Head::HumanFemale => -2.0,
-                Head::ElfMale => 0.0,
+                Head::ElfMale => -0.5,
                 Head::ElfFemale => -1.0,
                 Head::DwarfMale => -0.0,
                 Head::DwarfFemale => -1.0,
@@ -107,7 +124,7 @@ impl<'a> From<&'a HumanoidBody> for SkeletonAttr {
                 Head::HumanFemale => 0.0,
                 Head::OrcMale => 1.0,
                 Head::OrcFemale => 1.5, 
-                Head::ElfMale => -1.0,
+                Head::ElfMale => -0.5,
                 Head::ElfFemale => 0.0,
                 Head::DwarfMale => 2.0,
                 Head::UndeadMale => 1.0,

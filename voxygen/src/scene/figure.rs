@@ -162,18 +162,18 @@ impl FigureModelCache {
 
     fn load_head(head: Head) -> Mesh<FigurePipeline> {
         let (name, offset) = match head {
-            Head::HumanMale => ("figure/head_test1.vox", Vec3::new(-7.0, -7.0, -9.25)),
-            Head::HumanFemale => ("figure/head_human_female.vox", Vec3::new(-7.0, -7.5, -3.25)),
-            Head::ElfFemale => ("figure/head_elf_female.vox", Vec3::new(-8.0, -5.5, -3.0)),
-            Head::ElfMale => ("figure/head_elf_male.vox", Vec3::new(-9.0, -6.5, -3.75)),
-            Head::DwarfMale => ("figure/head_dwarf_male.vox", Vec3::new(-6.0, -5.0, -12.5)),
-            Head::DwarfFemale => ("figure/head_dwarf_female.vox", Vec3::new(-6.0, -6.0, -9.25)),
-            Head::OrcMale => ("figure/head_orc_male.vox", Vec3::new(-8.0, -6.0, -2.75)),
-            Head::OrcFemale => ("figure/head_orc_female.vox", Vec3::new(-8.0, -5.5, -2.75)),
-            Head::UndeadMale => ("figure/head_undead_male.vox", Vec3::new(-5.5, -5.0, -2.5)),
-            Head::UndeadFemale => ("figure/head_undead_female.vox", Vec3::new(-6.0, -5.0, -2.5)),
-            Head::DanariMale => ("figure/head_danari_male.vox", Vec3::new(-9.0, -5.0, -2.75)),
-            Head::DanariFemale => ("figure/head_danari_female.vox", Vec3::new(-9.0, -5.5, -2.5)),
+            Head::HumanMale => ("figure/head/head_human_male.vox", Vec3::new(-7.0, -7.0, -9.25)),
+            Head::HumanFemale => ("figure/head/head_human_female.vox", Vec3::new(-7.0, -7.5, -3.25)),
+            Head::ElfFemale => ("figure/head/head_elf_female.vox", Vec3::new(-8.0, -5.5, -3.0)),
+            Head::ElfMale => ("figure/head/head_elf_male.vox", Vec3::new(-9.0, -6.5, -3.75)),
+            Head::DwarfMale => ("figure/head/head_dwarf_male.vox", Vec3::new(-6.0, -5.0, -12.5)),
+            Head::DwarfFemale => ("figure/head/head_dwarf_female.vox", Vec3::new(-6.0, -6.0, -9.25)),
+            Head::OrcMale => ("figure/head/head_orc_male.vox", Vec3::new(-8.0, -6.0, -2.75)),
+            Head::OrcFemale => ("figure/head/head_orc_female.vox", Vec3::new(-8.0, -5.5, -2.75)),
+            Head::UndeadMale => ("figure/head/head_undead_male.vox", Vec3::new(-5.5, -5.0, -2.5)),
+            Head::UndeadFemale => ("figure/head/head_undead_female.vox", Vec3::new(-6.0, -5.0, -2.5)),
+            Head::DanariMale => ("figure/head/head_danari_male.vox", Vec3::new(-9.0, -5.0, -2.75)),
+            Head::DanariFemale => ("figure/head/head_danari_female.vox", Vec3::new(-9.0, -5.5, -2.5)),
 
             };
             Self::load_mesh(name, offset)
