@@ -47,6 +47,7 @@ pub trait Skeleton: Send + Sync + 'static {
 }
 
 pub struct SkeletonAttr {
+    scaler: f32,
     neck_height: f32,
     neck_forward: f32,
     weapon_x: f32,
@@ -58,6 +59,7 @@ pub struct SkeletonAttr {
 impl Default for SkeletonAttr {
     fn default() -> Self {
         Self {
+            scaler: 1.0,
             neck_height: 1.0,
             neck_forward: 1.0,
             weapon_x: 1.0,
@@ -69,6 +71,21 @@ impl Default for SkeletonAttr {
 impl<'a> From<&'a HumanoidBody> for SkeletonAttr {
     fn from(body: &'a HumanoidBody) -> Self {
         Self {
+            scaler: match body.head {
+                Head::OrcMale => 1.0,
+                Head::OrcFemale => 1.0,
+                Head::HumanMale => 1.0, 
+                Head::HumanFemale => 1.0,
+                Head::ElfMale => 1.0,
+                Head::ElfFemale => 1.0,
+                Head::DwarfMale => 1.0,
+                Head::DwarfFemale => 1.0,
+                Head::UndeadMale => 1.0,
+                Head::UndeadFemale => 1.0,
+                Head::DanariMale => 1.0,
+                Head::DanariFemale => 1.0,
+                _ => 1.0,
+            },
             neck_height: match body.head {
                 Head::OrcMale => -1.0,
                 Head::OrcFemale => -1.0,
