@@ -99,8 +99,8 @@ impl<'a> From<&'a HumanoidBody> for SkeletonAttr {
                 Head::DwarfFemale => 1.0,
                 Head::UndeadMale => 1.0,
                 Head::UndeadFemale => 1.0,
-                Head::DanariMale => 1.15,
-                Head::DanariFemale => 1.15,
+                Head::DanariMale => 1.20,
+                Head::DanariFemale => 1.20,
                 _ => 1.0,
             },
             neck_height: match body.head {
@@ -114,8 +114,8 @@ impl<'a> From<&'a HumanoidBody> for SkeletonAttr {
                 Head::DwarfFemale => -1.0,
                 Head::UndeadMale => -1.0,
                 Head::UndeadFemale => -1.0,
-                Head::DanariMale => 0.0,
-                Head::DanariFemale => -1.0,
+                Head::DanariMale => 0.5,
+                Head::DanariFemale => -0.5,
                 _ => 1.0,
             },
             neck_forward: match body.head {

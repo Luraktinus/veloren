@@ -39,7 +39,7 @@ impl Animation for GlidingAnimation {
         next.head.offset = Vec3::new(0.0, 0.0 + skeleton_attr.neck_forward, skeleton_attr.neck_height + 2.0) * skeleton_attr.scaler;
         next.head.ori = Quaternion::rotation_x(0.35 - wave_very_slow * 0.10 + head_look.y)
             * Quaternion::rotation_z(head_look.x + wave_very_slow_cos * 0.15);
-        next.head.scale = Vec3::one() * skeleton_attr.scaler;
+        next.head.scale = Vec3::one() * skeleton_attr.scaler * skeleton_attr.head_scale;
 
         next.chest.offset = Vec3::new(0.0, 0.0, -2.0) * skeleton_attr.scaler;
         next.chest.ori = Quaternion::rotation_z(wave_very_slow_cos * 0.2);

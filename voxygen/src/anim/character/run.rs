@@ -39,7 +39,7 @@ impl Animation for RunAnimation {
         next.head.offset = Vec3::new(0.0, -1.0 + skeleton_attr.neck_forward, skeleton_attr.neck_height + 15.0 + wave_cos * 1.3) * skeleton_attr.scaler;
         next.head.ori = Quaternion::rotation_z(head_look.x + wave * 0.1)
             * Quaternion::rotation_x(head_look.y + 0.35) * skeleton_attr.scaler;
-        next.head.scale = Vec3::one() * skeleton_attr.scaler;
+        next.head.scale = Vec3::one() * skeleton_attr.scaler * skeleton_attr.head_scale;
 
         next.chest.offset = Vec3::new(0.0, 0.0, 7.0 + wave_cos * 1.1) * skeleton_attr.scaler;
         next.chest.ori = Quaternion::rotation_z(wave * 0.1);
