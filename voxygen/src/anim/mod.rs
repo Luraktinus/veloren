@@ -47,13 +47,17 @@ pub trait Skeleton: Send + Sync + 'static {
 }
 
 pub struct SkeletonAttr {
-    neck_scale: f32,
+    neck_height: f32,
+    neck_forward: f32,
+
 }
+
 
 impl Default for SkeletonAttr {
     fn default() -> Self {
         Self {
-            neck_scale: 1.0,
+            neck_height: 1.0,
+            neck_forward: 1.0,
         }
     }
 }
@@ -61,8 +65,34 @@ impl Default for SkeletonAttr {
 impl<'a> From<&'a HumanoidBody> for SkeletonAttr {
     fn from(body: &'a HumanoidBody) -> Self {
         Self {
-            neck_scale: match body.head {
-                Head::Elf => 1.3,
+            neck_height: match body.head {
+                Head::OrcMale => 3.0,
+                Head::OrcFemale => 3.0,
+                Head::HumanMale => -3.0, 
+                Head::HumanFemale => 2.5,
+                Head::ElfMale => 5.5,
+                Head::ElfFemale => 0.0,
+                Head::DwarfMale => -7.0,
+                Head::DwarfFemale => -2.0,
+                Head::UndeadMale => 1.0,
+                Head::UndeadFemale => 1.0,
+                Head::DanariMale => 0.0,
+                Head::DanariFemale => 1.0,
+                _ => 1.0,
+            },
+            neck_forward: match body.head {
+                //Head::Elf => 0.0,
+                //Head::Dwarf => 0.0,
+                //Head::Human => 3.0,
+                Head::OrcMale => 1.0,
+                Head::OrcFemale => 3.0, 
+                Head::HumanFemale => 0.0,
+                Head::ElfMale => 0.0,
+                Head::DwarfMale => 2.0,
+                Head::UndeadMale => 1.0,
+                Head::UndeadFemale => 0.5,
+                Head::DanariMale => 0.0,
+                Head::DanariFemale => 0.0,
                 _ => 1.0,
             },
         }

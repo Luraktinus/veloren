@@ -34,7 +34,7 @@ impl Animation for IdleAnimation {
                 .sin()
                 * 0.25,
         );
-        next.head.offset = Vec3::new(0.0, 0.0, 15.0 + wave_ultra_slow * 0.3);
+        next.head.offset = Vec3::new(0.0, 0.0 + skeleton_attr.neck_forward, skeleton_attr.neck_height + 15.0 + wave_ultra_slow * 0.3);
         next.head.ori = Quaternion::rotation_z(head_look.x) * Quaternion::rotation_x(head_look.y);
         next.head.scale = Vec3::one();
 
