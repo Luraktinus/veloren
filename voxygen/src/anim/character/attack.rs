@@ -73,7 +73,7 @@ impl Animation for AttackAnimation {
         next.r_foot.ori = Quaternion::rotation_x(wave_stop_quick * 1.2);
         next.r_foot.scale = Vec3::one();
 
-        next.weapon.offset = Vec3::new(-7.0, -2.0, 5.0);
+        next.weapon.offset = Vec3::new(-7.0 + skeleton_attr.weapon_x, -2.0 + skeleton_attr.weapon_y, 5.0);
         next.weapon.ori = Quaternion::rotation_y(2.5);
         next.weapon.scale = Vec3::one() * 0.0;
 
@@ -90,7 +90,7 @@ impl Animation for AttackAnimation {
         next.draw.scale = Vec3::one() * 0.0;
 
         next.left_equip.offset = Vec3::new(
-            -8.0 + wave_quicken_slow * 10.0,
+            -8.0 + wave_quicken_slow * 10.0+ skeleton_attr.weapon_x,
             4.0 + wave_quicken_double * 3.0,
             9.0,
         ) / 11.0;

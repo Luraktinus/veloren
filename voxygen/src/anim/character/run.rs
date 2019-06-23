@@ -76,9 +76,8 @@ impl Animation for RunAnimation {
         next.r_foot.ori = Quaternion::rotation_x(-0.0 + wave_cos * 1.5);
         next.r_foot.scale = Vec3::one();
 
-        next.weapon.offset = Vec3::new(-7.0, -5.0, 15.0);
-        next.weapon.ori =
-            Quaternion::rotation_y(2.5) * Quaternion::rotation_z(1.57 + wave_cos * 0.25);
+        next.weapon.offset = Vec3::new(-7.0 + skeleton_attr.weapon_x, -5.0 + skeleton_attr.weapon_y, 15.0);
+        next.weapon.ori = Quaternion::rotation_y(2.5) * Quaternion::rotation_z(1.57 + wave_cos * 0.25);
         next.weapon.scale = Vec3::one();
 
         next.l_shoulder.offset = Vec3::new(-10.0, -3.2, 2.5);

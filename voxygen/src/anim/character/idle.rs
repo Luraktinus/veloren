@@ -19,6 +19,8 @@ impl Animation for IdleAnimation {
     ) -> Self::Skeleton {
         let mut next = (*skeleton).clone();
 
+        let wave = (anim_time as f32 * 4.0).sin();
+
         let wave_ultra_slow = (anim_time as f32 * 1.0 + PI).sin();
         let wave_ultra_slow_cos = (anim_time as f32 * 1.0 + PI).cos();
 
@@ -75,7 +77,7 @@ impl Animation for IdleAnimation {
         next.r_foot.ori = Quaternion::identity();
         next.r_foot.scale = Vec3::one();
 
-        next.weapon.offset = Vec3::new(-7.0, -5.0, 15.0);
+        next.weapon.offset = Vec3::new(-7.0 + skeleton_attr.weapon_x, -5.0 + skeleton_attr.weapon_y, 15.0);
         next.weapon.ori = Quaternion::rotation_y(2.5) * Quaternion::rotation_z(1.57);
         next.weapon.scale = Vec3::one();
 

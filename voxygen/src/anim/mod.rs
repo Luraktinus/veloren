@@ -5,7 +5,7 @@ pub mod quadrupedmedium;
 
 use crate::render::FigureBoneData;
 use vek::*;
-use common::comp::actor::{HumanoidBody, Head};
+use common::comp::actor::{HumanoidBody, Head, Weapon};
 
 #[derive(Copy, Clone)]
 pub struct Bone {
@@ -49,6 +49,8 @@ pub trait Skeleton: Send + Sync + 'static {
 pub struct SkeletonAttr {
     neck_height: f32,
     neck_forward: f32,
+    weapon_x: f32,
+    weapon_y: f32,
 
 }
 
@@ -58,6 +60,8 @@ impl Default for SkeletonAttr {
         Self {
             neck_height: 1.0,
             neck_forward: 1.0,
+            weapon_x: 1.0,
+            weapon_y: 1.0,
         }
     }
 }
@@ -66,33 +70,57 @@ impl<'a> From<&'a HumanoidBody> for SkeletonAttr {
     fn from(body: &'a HumanoidBody) -> Self {
         Self {
             neck_height: match body.head {
-                Head::OrcMale => 3.0,
-                Head::OrcFemale => 3.0,
-                Head::HumanMale => -3.0, 
-                Head::HumanFemale => 2.5,
-                Head::ElfMale => 5.5,
-                Head::ElfFemale => 0.0,
-                Head::DwarfMale => -7.0,
-                Head::DwarfFemale => -2.0,
-                Head::UndeadMale => 1.0,
-                Head::UndeadFemale => 1.0,
+                Head::OrcMale => -1.0,
+                Head::OrcFemale => -1.0,
+                Head::HumanMale => -1.0, 
+                Head::HumanFemale => -2.0,
+                Head::ElfMale => 0.0,
+                Head::ElfFemale => -1.0,
+                Head::DwarfMale => -0.0,
+                Head::DwarfFemale => -1.0,
+                Head::UndeadMale => -1.0,
+                Head::UndeadFemale => -1.0,
                 Head::DanariMale => 0.0,
-                Head::DanariFemale => 1.0,
+                Head::DanariFemale => -1.0,
                 _ => 1.0,
             },
             neck_forward: match body.head {
-                //Head::Elf => 0.0,
-                //Head::Dwarf => 0.0,
-                //Head::Human => 3.0,
-                Head::OrcMale => 1.0,
-                Head::OrcFemale => 3.0, 
+                Head::DwarfFemale => -1.0,
+                Head::HumanMale => 2.0,
                 Head::HumanFemale => 0.0,
-                Head::ElfMale => 0.0,
+                Head::OrcMale => 1.0,
+                Head::OrcFemale => 1.5, 
+                Head::ElfMale => -1.0,
+                Head::ElfFemale => 0.0,
                 Head::DwarfMale => 2.0,
                 Head::UndeadMale => 1.0,
-                Head::UndeadFemale => 0.5,
-                Head::DanariMale => 0.0,
+                Head::UndeadFemale => 1.0,
+                Head::DanariMale => 0.5,
                 Head::DanariFemale => 0.0,
+                _ => 1.0,
+            },
+            weapon_x: match body.weapon {
+                Weapon::Sword => 0.0,
+                Weapon::Axe => 3.0,
+                Weapon::Hammer => 0.0,
+                Weapon::SwordShield => 3.0,
+                Weapon::Staff => 3.0,
+                Weapon::Bow => 0.0,
+                Weapon::Daggers => 0.0,
+
+
+                _ => 1.0,
+            },
+            weapon_y: match body.weapon {
+                Weapon::Sword => 0.0,
+                Weapon::Axe => 1.0,
+                Weapon::Hammer => -2.0,
+                Weapon::SwordShield => 1.0,
+                Weapon::Staff => 1.0,
+                Weapon::Bow => -2.0,
+                Weapon::Daggers => -2.0,
+
+
                 _ => 1.0,
             },
         }
