@@ -74,18 +74,18 @@ impl<'a> From<&'a HumanoidBody> for SkeletonAttr {
     fn from(body: &'a HumanoidBody) -> Self {
         Self {
             scaler: match body.head {
-                Head::OrcMale => 1.10,
+                Head::OrcMale => 1.2,
                 Head::OrcFemale => 1.0,
                 Head::HumanMale => 1.0, 
-                Head::HumanFemale => 0.95,
-                Head::ElfMale => 1.05,
+                Head::HumanFemale => 0.90,
+                Head::ElfMale => 1.10,
                 Head::ElfFemale => 1.0,
-                Head::DwarfMale => 0.9,
-                Head::DwarfFemale => 0.9,
+                Head::DwarfMale => 0.8,
+                Head::DwarfFemale => 0.8,
                 Head::UndeadMale => 1.0,
-                Head::UndeadFemale => 0.95,
-                Head::DanariMale => 0.8,
-                Head::DanariFemale => 0.78,
+                Head::UndeadFemale => 0.90,
+                Head::DanariMale => 0.6,
+                Head::DanariFemale => 0.56,
                 _ => 1.0,
             },
             head_scale: match body.head {

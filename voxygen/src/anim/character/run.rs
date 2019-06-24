@@ -36,46 +36,46 @@ impl Animation for RunAnimation {
                 * 0.1,
         );
 
-        next.head.offset = Vec3::new(0.0, -1.0 + skeleton_attr.neck_forward, skeleton_attr.neck_height + 15.0 + wave_cos * 1.3) * skeleton_attr.scaler;
+        next.head.offset = Vec3::new(0.0, -1.0 + skeleton_attr.neck_forward, skeleton_attr.neck_height + 15.0 + wave_cos * 1.3);
         next.head.ori = Quaternion::rotation_z(head_look.x + wave * 0.1)
-            * Quaternion::rotation_x(head_look.y + 0.35) * skeleton_attr.scaler;
-        next.head.scale = Vec3::one() * skeleton_attr.scaler * skeleton_attr.head_scale;
+            * Quaternion::rotation_x(head_look.y + 0.35);
+        next.head.scale = Vec3::one() * skeleton_attr.head_scale;
 
-        next.chest.offset = Vec3::new(0.0, 0.0, 7.0 + wave_cos * 1.1) * skeleton_attr.scaler;
+        next.chest.offset = Vec3::new(0.0, 0.0, 7.0 + wave_cos * 1.1);
         next.chest.ori = Quaternion::rotation_z(wave * 0.1);
-        next.chest.scale = Vec3::one() * skeleton_attr.scaler;
+        next.chest.scale = Vec3::one();
 
-        next.belt.offset = Vec3::new(0.0, 0.0, 5.0 + wave_cos * 1.1) * skeleton_attr.scaler;
+        next.belt.offset = Vec3::new(0.0, 0.0, 5.0 + wave_cos * 1.1);
         next.belt.ori = Quaternion::rotation_z(wave * 0.25);
-        next.belt.scale = Vec3::one() * skeleton_attr.scaler;
+        next.belt.scale = Vec3::one();
 
-        next.shorts.offset = Vec3::new(0.0, 0.0, 2.0 + wave_cos * 1.1) * skeleton_attr.scaler;
+        next.shorts.offset = Vec3::new(0.0, 0.0, 2.0 + wave_cos * 1.1);
         next.shorts.ori = Quaternion::rotation_z(wave * 0.6);
-        next.shorts.scale = Vec3::one() * skeleton_attr.scaler;
+        next.shorts.scale = Vec3::one();
 
         next.l_hand.offset = Vec3::new(
             -7.5 + wave_cos_dub * 1.0,
             2.0 + wave_cos * 5.0,
             7.0 - wave * 1.5,
         ) * skeleton_attr.scaler;
-        next.l_hand.ori = Quaternion::rotation_x(wave_cos * 0.8) * skeleton_attr.scaler;
+        next.l_hand.ori = Quaternion::rotation_x(wave_cos * 0.8);
         next.l_hand.scale = Vec3::one() * skeleton_attr.scaler;
 
         next.r_hand.offset = Vec3::new(
             7.5 - wave_cos_dub * 1.0,
             2.0 - wave_cos * 5.0,
             7.0 + wave * 1.5,
-        ) * skeleton_attr.scaler;
+        );
         next.r_hand.ori = Quaternion::rotation_x(wave_cos * -0.8);
-        next.r_hand.scale = Vec3::one() * skeleton_attr.scaler;
+        next.r_hand.scale = Vec3::one();
 
-        next.l_foot.offset = Vec3::new(-3.4, 0.0 + wave_cos * 1.0, 6.0 - wave_cos * 0.1) * skeleton_attr.scaler;
+        next.l_foot.offset = Vec3::new(-3.4, 0.0 + wave_cos * 1.0, 6.0 - wave_cos * 0.1);
         next.l_foot.ori = Quaternion::rotation_x(-0.0 - wave_cos * 1.5);
-        next.l_foot.scale = Vec3::one() * skeleton_attr.scaler;
+        next.l_foot.scale = Vec3::one();
 
-        next.r_foot.offset = Vec3::new(3.4, 0.0 - wave_cos * 1.0, 6.0 - wave_cos * 0.1) * skeleton_attr.scaler;
+        next.r_foot.offset = Vec3::new(3.4, 0.0 - wave_cos * 1.0, 6.0 - wave_cos * 0.1);
         next.r_foot.ori = Quaternion::rotation_x(-0.0 + wave_cos * 1.5);
-        next.r_foot.scale = Vec3::one() * skeleton_attr.scaler;
+        next.r_foot.scale = Vec3::one();
 
         next.weapon.offset = Vec3::new(-7.0 + skeleton_attr.weapon_x, -5.0 + skeleton_attr.weapon_y, 15.0);
         next.weapon.ori = Quaternion::rotation_y(2.5) * Quaternion::rotation_z(1.57 + wave_cos * 0.25);
@@ -89,17 +89,17 @@ impl Animation for RunAnimation {
         next.r_shoulder.ori = Quaternion::rotation_x(0.0);
         next.r_shoulder.scale = Vec3::one() * 1.04;
 
-        next.draw.offset = Vec3::new(0.0, 5.0, 0.0) * skeleton_attr.scaler;
+        next.draw.offset = Vec3::new(0.0, 5.0, 0.0);
         next.draw.ori = Quaternion::rotation_y(0.0);
-        next.draw.scale = Vec3::one() * 0.0 * skeleton_attr.scaler;
+        next.draw.scale = Vec3::one() * 0.0;
 
-        next.left_equip.offset = Vec3::new(0.0, 0.0, 5.0) / 11.0 * skeleton_attr.scaler;
+        next.left_equip.offset = Vec3::new(0.0, 0.0, 5.0) / 11.0;
         next.left_equip.ori = Quaternion::rotation_x(0.0);;
-        next.left_equip.scale = Vec3::one() * 0.0 * skeleton_attr.scaler;
+        next.left_equip.scale = Vec3::one() * 0.0;
 
-        next.right_equip.offset = Vec3::new(0.0, 0.0, 5.0) / 11.0 * skeleton_attr.scaler;
+        next.right_equip.offset = Vec3::new(0.0, 0.0, 5.0) / 11.0;
         next.right_equip.ori = Quaternion::rotation_x(0.0);;
-        next.right_equip.scale = Vec3::one() * 0.0 * skeleton_attr.scaler;
+        next.right_equip.scale = Vec3::one() * 0.0;
 
         next.torso.offset = Vec3::new(0.0, -0.2, 0.4 + wave_cos * 0.1) * skeleton_attr.scaler;
         next.torso.ori =
