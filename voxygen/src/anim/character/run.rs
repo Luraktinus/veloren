@@ -57,9 +57,9 @@ impl Animation for RunAnimation {
             -7.5 + wave_cos_dub * 1.0,
             2.0 + wave_cos * 5.0,
             7.0 - wave * 1.5,
-        ) * skeleton_attr.scaler;
+        );
         next.l_hand.ori = Quaternion::rotation_x(wave_cos * 0.8);
-        next.l_hand.scale = Vec3::one() * skeleton_attr.scaler;
+        next.l_hand.scale = Vec3::one();
 
         next.r_hand.offset = Vec3::new(
             7.5 - wave_cos_dub * 1.0,

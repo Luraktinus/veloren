@@ -101,10 +101,6 @@ impl Animation for IdleAnimation {
         next.right_equip.ori = Quaternion::rotation_x(0.0);;
         next.right_equip.scale = Vec3::one() * 0.0;
 
-//        next.hair.offset = Vec3::new(0.0, 0.0, 1.0);
-//        next.hair.ori = Quaternion::rotation_x(0.0);
-//        next.hair.scale = Vec3::one();
-
         next.torso.offset = Vec3::new(0.0, -0.2, 0.1) * skeleton_attr.scaler;
         next.torso.ori = Quaternion::rotation_x(0.0);
         next.torso.scale = Vec3::one() / 11.0 * skeleton_attr.scaler;
