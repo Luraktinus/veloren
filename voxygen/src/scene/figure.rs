@@ -170,7 +170,7 @@ impl FigureModelCache {
             ),
             (Race::Elf, BodyType::Male) => (
                 "figure/head/head_elf_male.vox",
-                Vec3::new(-9.0, -6.5, -3.75),
+                Vec3::new(-7.0, -6.5, -3.75),
             ),
             (Race::Elf, BodyType::Female) => (
                 "figure/head/head_elf_female.vox",
