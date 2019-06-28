@@ -111,7 +111,7 @@ impl<'a> From<&'a HumanoidBody> for SkeletonAttr {
                 (Race::Dwarf, BodyType::Male) => -0.0,
                 (Race::Dwarf, BodyType::Female) => -1.0,
                 (Race::Undead, BodyType::Male) => -1.0,
-                (Race::Undead, BodyType::Female) => -1.0,
+                (Race::Undead, BodyType::Female) => -0.5,
                 (Race::Danari, BodyType::Male) => 0.5,
                 (Race::Danari, BodyType::Female) => -0.5,
                 _ => 1.0,
