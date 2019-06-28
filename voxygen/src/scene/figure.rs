@@ -210,7 +210,7 @@ impl FigureModelCache {
             ),
             _ => {
                 warn!("Invalid race, body_type combination for figure head");
-                ("figure/head/head_human_male", Vec3::new(-7.0, -7.0, -9.25))
+                ("figure/head/head_human_male.vox", Vec3::new(-7.0, -7.0, -9.25))
             }
         };
         Self::load_mesh(name, offset)
