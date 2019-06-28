@@ -730,8 +730,8 @@ impl CharSelectionUi {
             }
             // REMOVE THIS AFTER IMPLEMENTATION
             /*Rectangle::fill_with([67.0, 67.0], color::rgba(0.0, 0.0, 0.0, 0.8))
-                .middle_of(self.ids.hammer)
-                .set(self.ids.hammer_grey, ui_widgets);*/
+            .middle_of(self.ids.hammer)
+            .set(self.ids.hammer_grey, ui_widgets);*/
 
             // Bow
 
@@ -839,8 +839,8 @@ impl CharSelectionUi {
             }
             // REMOVE THIS AFTER IMPLEMENTATION
             /*Rectangle::fill_with([67.0, 67.0], color::rgba(0.0, 0.0, 0.0, 0.8))
-                .middle_of(self.ids.axe)
-                .set(self.ids.axe_grey, ui_widgets);*/
+            .middle_of(self.ids.axe)
+            .set(self.ids.axe_grey, ui_widgets);*/
 
             // Sliders
 
