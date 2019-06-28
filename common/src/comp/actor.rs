@@ -14,8 +14,7 @@ pub enum Race {
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum BodyType {
     Female,
-    Male,
-    Unspecified,
+    Male,   
 }
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
