@@ -37,6 +37,7 @@ before_script:
   - if [ -d target ]; then
       ls -la target;
     fi;
+  - md5sum Cargo.lock > lock-checksum
 
 #############
 # BUILD
@@ -62,13 +63,18 @@ build-server-cli:
 # VERIFY
 #############
 
-# verify-lock:
-#   stage: test
-#   image: registry.gitlab.com/veloren/veloren-docker-ci
-#   tags:
-#     - veloren-docker
-#   script:
-#     - cargo test
+verify-lock:
+  stage: test
+  image: registry.gitlab.com/veloren/veloren-docker-ci
+  tags:
+    - veloren-docker
+  script:
+    - local NEW_SUM=$(md5sum Cargo.lock)
+    - local OLD_SUM=$(cat lock-checksum)
+    - if [ NEW_SUM != OLD_SUM ]; then
+        echo "Something changed in the Cargo.lock file, please go and commit this file!"
+        return 1
+      fi
 
 verify-rebase:
   stage: test
@@ -77,14 +83,12 @@ verify-rebase:
     - veloren-docker
   script:
     - git fetch origin master
-    - BRANCH_NAME = git branch --contains HEAD | tail -1 | xargs
-    - LATEST_COMMIT = git show-ref --heads -s $BRANCH_NAME
-    - SIMILAR_COMMIT = git merge-base $BRANCH_NAME origin/master
+    - local BRANCH_NAME=$(git branch --contains HEAD | tail -1 | xargs)
+    - local LATEST_COMMIT=$(git show-ref --heads -s $BRANCH_NAME)
+    - local SIMILAR_COMMIT=$(git merge-base $BRANCH_NAME origin/master)
     - if [ $LATEST_COMMIT != $SIMILAR_COMMIT ]; then
         echo "This branch needs to be rebased!"
         return 1
-      else
-        return 0
       fi
 
 #############
