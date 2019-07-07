@@ -59,6 +59,35 @@ build-server-cli:
     - (cd server-cli && cargo rustc -v -- -D warnings)
 
 #############
+# VERIFY
+#############
+
+# verify-lock:
+#   stage: test
+#   image: registry.gitlab.com/veloren/veloren-docker-ci
+#   tags:
+#     - veloren-docker
+#   script:
+#     - cargo test
+
+verify-rebase:
+  stage: test
+  image: registry.gitlab.com/veloren/veloren-docker-ci
+  tags:
+    - veloren-docker
+  script:
+    - git fetch origin master
+    - BRANCH_NAME = git branch --contains HEAD | tail -1 | xargs
+    - LATEST_COMMIT = git show-ref --heads -s $BRANCH_NAME
+    - SIMILAR_COMMIT = git merge-base $BRANCH_NAME origin/master
+    - if [ $LATEST_COMMIT != $SIMILAR_COMMIT ]; then
+        echo "This branch needs to be rebased!"
+        return 1
+      else
+        return 0
+      fi
+
+#############
 # TEST
 #############
 
