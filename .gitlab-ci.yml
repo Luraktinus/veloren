@@ -1,5 +1,6 @@
 stages:
   - build
+  - verify
   - test
   - post-build
   - executable
@@ -64,7 +65,7 @@ build-server-cli:
 #############
 
 verify-lock:
-  stage: test
+  stage: verify
   image: registry.gitlab.com/veloren/veloren-docker-ci
   tags:
     - veloren-docker
@@ -77,7 +78,7 @@ verify-lock:
       fi
 
 verify-rebase:
-  stage: test
+  stage: verify
   image: registry.gitlab.com/veloren/veloren-docker-ci
   tags:
     - veloren-docker
