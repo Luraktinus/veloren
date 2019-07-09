@@ -46,7 +46,6 @@ serde = "1.0.98"
 serde_derive = "1.0.98"
 ron = "0.5.1"
 guillotiere = "0.4.2"
-fnv = "1.0.6"
 simplelog = "0.6.0"
 msgbox = { git = "https://github.com/bekker/msgbox-rs.git" }
 directories = "2.0.2"
