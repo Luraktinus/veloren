@@ -577,7 +577,10 @@ fn handle_object(server: &mut Server, entity: EcsEntity, args: String, _action: 
             .build();
         server.clients.notify(
             entity,
-            ServerMsg::chat(format!("Spawned: {}", obj_str_opt.unwrap())),
+            ServerMsg::chat(format!(
+                "Spawned: {}",
+                obj_str_opt.unwrap_or("<Unknown object>")
+            )),
         );
     } else {
         server
