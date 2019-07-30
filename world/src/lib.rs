@@ -4,6 +4,7 @@ mod all;
 mod block;
 mod column;
 pub mod config;
+pub mod manifest;
 pub mod sim;
 pub mod util;
 

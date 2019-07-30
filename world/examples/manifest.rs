@@ -1,13 +1,14 @@
-mod manifest;
-use common::assets::{load_from_path, read_from_assets};
-use manifest::encode::{calc_hash, BlockManifest};
+use common::assets::read_from_assets;
 use ron::ser::{to_string_pretty, PrettyConfig};
-use std::collections::BTreeMap;
-use std::fs::File;
-use std::prelude::*;
+use std::{
+    collections::BTreeMap,
+    fs::File,
+    io::{BufWriter, Write},
+};
+use veloren_world::manifest::encode::{calc_hash, BlockManifest};
 
 fn main() -> std::io::Result<()> {
-    //let mut manifesto = File::create("Manifest.ron")?;
+    let mut manifesto = BufWriter::new(File::create("block_manifest.ron")?);
     let files = load_assets("world/tree");
     for (file, entry) in &files {
         let data = BlockManifest {
@@ -20,8 +21,11 @@ fn main() -> std::io::Result<()> {
         };
         let pretty = PrettyConfig::default();
         let s = to_string_pretty(&data, pretty).expect("Serialization failed");
-        println!("{}", s)
-        //println!("{:?}", assets_map(&file))
+        let data = s + ",\n";
+        //println!("{}", s)
+        manifesto
+            .write_all(data.as_bytes())
+            .expect("cannot write data to the file.");
     }
     Ok(())
 }
