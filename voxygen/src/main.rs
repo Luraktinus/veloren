@@ -38,7 +38,7 @@ use common::util::VelorenLogger;
 use heaptrack::track_mem;
 use log::{self, debug, error, info, warn};
 
-use std::{fs::File, mem, panic, str::FromStr};
+use std::{mem, panic, str::FromStr};
 
 track_mem!();
 
