@@ -120,11 +120,17 @@ fn main() {
         .and_then(|env| env.to_str().map(|s| s.to_owned()))
         .and_then(|s| log::LevelFilter::from_str(&s).ok())
         .unwrap_or(log::LevelFilter::Warn);
+        
+    let mut config = Config::default();
+    config.filter_ignore = Some(&["gfx"]);
+    config.target = Some(log::Level::Error);
+    config.location = Some(log::Level::Error);
+    
     CombinedLogger::init(vec![
-        TermLogger::new(term_log_level, Config::default(), TerminalMode::Mixed).unwrap(),
+        TermLogger::new(term_log_level, config, TerminalMode::Mixed).unwrap(),
         WriteLogger::new(
             log::LevelFilter::Info,
-            Config::default(),
+            config,
             File::create(&global_state.settings.log.file).unwrap(),
         ),
     ])
