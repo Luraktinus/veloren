@@ -34,10 +34,10 @@ use crate::{
     audio::base::Genre, audio::AudioFrontend, menu::main::MainMenuState, settings::Settings,
     window::Window,
 };
+use common::util::VelorenLogger;
 use heaptrack::track_mem;
 use log::{self, debug, error, info, warn};
 
-use simplelog::{CombinedLogger, Config, TermLogger, TerminalMode, WriteLogger};
 use std::{fs::File, mem, panic, str::FromStr};
 
 track_mem!();
@@ -120,21 +120,11 @@ fn main() {
         .and_then(|env| env.to_str().map(|s| s.to_owned()))
         .and_then(|s| log::LevelFilter::from_str(&s).ok())
         .unwrap_or(log::LevelFilter::Warn);
-        
-    let mut config = Config::default();
-    config.filter_ignore = Some(&["gfx"]);
-    config.target = Some(log::Level::Error);
-    config.location = Some(log::Level::Error);
-    
-    CombinedLogger::init(vec![
-        TermLogger::new(term_log_level, config, TerminalMode::Mixed).unwrap(),
-        WriteLogger::new(
-            log::LevelFilter::Info,
-            config,
-            File::create(&global_state.settings.log.file).unwrap(),
-        ),
-    ])
-    .unwrap();
+
+    VelorenLogger::new()
+        .with_term(&term_log_level)
+        .with_file(&global_state.settings.log.file)
+        .apply();
 
     // Initialize discord. (lazy_static initalise lazily...)
     #[cfg(feature = "discord")]

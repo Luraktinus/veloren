@@ -1,4 +1,4 @@
-use common::clock::Clock;
+use common::{clock::Clock, logging::VelorenLogger};
 use heaptrack::track_mem;
 use log::info;
 use server::{Event, Input, Server, ServerSettings};
@@ -10,7 +10,9 @@ const TPS: u64 = 30;
 
 fn main() {
     // Init logging
-    pretty_env_logger::init();
+    VelorenLogger::new()
+        .with_term(&log::LevelFilter::Info)
+        .apply();
 
     info!("Starting server-cli...");
 

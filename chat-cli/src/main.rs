@@ -1,5 +1,5 @@
 use client::{Client, Event};
-use common::{clock::Clock, comp};
+use common::{clock::Clock, comp, logging::VelorenLogger};
 use log::{error, info};
 use std::{io, net::ToSocketAddrs, sync::mpsc, thread, time::Duration};
 
@@ -16,8 +16,10 @@ fn read_input() -> String {
 }
 
 fn main() {
-    // Initialize logging.
-    pretty_env_logger::init();
+    // Initialize logging. TODO: probably log to a file instead.
+    VelorenLogger::new()
+        .with_term(&log::LevelFilter::Warn)
+        .apply();
 
     info!("Starting chat-cli...");
 
