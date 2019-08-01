@@ -6,7 +6,7 @@ use crossbeam::{
     queue::SegQueue,
     sync::ShardedLock,
 };
-use rodio::{Decoder, Device, Sink};
+use rodio::{Decoder, Device, Sink, SpatialSink};
 use std::fs::File;
 use std::io::BufReader;
 use std::sync::{Arc, Condvar, Mutex};
@@ -237,10 +237,10 @@ struct MonoEmitter {
     stream: Sink,
 }
 
-// struct StereoEmitter {
-//     device: Device,
-//     stream: SpatialSink,
-// }
+struct StereoEmitter {
+    device: Device,
+    stream: SpatialSink,
+}
 
 impl MonoEmitter {
     fn new(settings: &AudioSettings) -> Self {
@@ -289,56 +289,56 @@ impl AudioConfig for MonoEmitter {
     }
 }
 
-// impl StereoEmitter {
-//     fn new(settings: &AudioSettings) -> Self {
-//        let device = match &settings.audio_device {
-//            Some(dev) => rodio::output_devices()
-//                .find(|x| &x.name() == dev)
-//                .or_else(rodio::default_output_device)
-//                .expect("No Audio devices found!"),
-//            None => rodio::default_output_device().expect("No Audio devices found!"),
-//        };
-//         let sink = SpatialSink::new(
-//             &device.device,
-//             [0.0, 0.0, 0.0],
-//             [1.0, 0.0, 0.0],
-//             [-1.0, 0.0, 0.0],
-//         );
-//         sink.set_volume(settings.music_volume);
+impl StereoEmitter {
+    fn new(settings: &AudioSettings) -> Self {
+        let device = match &settings.audio_device {
+            Some(dev) => rodio::output_devices()
+                .find(|x| &x.name() == dev)
+                .or_else(rodio::default_output_device)
+                .expect("No Audio devices found!"),
+            None => rodio::default_output_device().expect("No Audio devices found!"),
+        };
+        let sink = SpatialSink::new(
+            &device.device,
+            [0.0, 0.0, 0.0],
+            [1.0, 0.0, 0.0],
+            [-1.0, 0.0, 0.0],
+        );
+        sink.set_volume(settings.music_volume);
 
-//         Self {
-//             device,
-//             stream: sink,
-//         }
-//     }
+        Self {
+            device,
+            stream: sink,
+        }
+    }
 
-//     fn play_from(&mut self, path: &str) {
-//         let bufreader = load_from_path(path).unwrap();
-//         let src = Decoder::new(bufreader).unwrap();
-//         self.stream.append(src);
-//     }
-// }
+    fn play_from(&mut self, path: &str) {
+        let bufreader = load_from_path(path).unwrap();
+        let src = Decoder::new(bufreader).unwrap();
+        self.stream.append(src);
+    }
+}
 
-// impl AudioConfig for StereoEmitter {
-//     fn set_volume(&mut self, volume: f32) {
-//         self.stream.set_volume(volume.min(1.0).max(0.0))
-//     }
+impl AudioConfig for StereoEmitter {
+    fn set_volume(&mut self, volume: f32) {
+        self.stream.set_volume(volume.min(1.0).max(0.0))
+    }
 
-//     /// Sets the current audio device from a string.
-//     /// Does not use the rodio Device struct in case that detail changes.
-//     /// If the string is an invalid audio device, then no change is made.
-//     fn set_device(&mut self, name: String) {
-//         if let Some(dev) = rodio::output_devices().find(|x| x.name() == name) {
-//             self.device = dev;
-//             self.stream = SpatialSink::new(
-//                 &self.device,
-//                 [0.0, 0.0, 0.0],
-//                 [1.0, 0.0, 0.0],
-//                 [-1.0, 0.0, 0.0],
-//             );
-//         }
-//     }
-// }
+    /// Sets the current audio device from a string.
+    /// Does not use the rodio Device struct in case that detail changes.
+    /// If the string is an invalid audio device, then no change is made.
+    fn set_device(&mut self, name: String) {
+        if let Some(dev) = rodio::output_devices().find(|x| x.name() == name) {
+            self.device = dev;
+            self.stream = SpatialSink::new(
+                &self.device,
+                [0.0, 0.0, 0.0],
+                [1.0, 0.0, 0.0],
+                [-1.0, 0.0, 0.0],
+            );
+        }
+    }
+}
 
 /// Returns the default audio device.
 /// Does not return rodio Device struct in case our audio backend changes.
