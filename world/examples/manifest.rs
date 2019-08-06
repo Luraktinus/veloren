@@ -1,4 +1,4 @@
-use common::assets::read_from_assets;
+use common::assets::read_dir;
 use ron::ser::{to_string_pretty, PrettyConfig};
 use std::{
     collections::BTreeMap,
@@ -9,7 +9,7 @@ use veloren_world::manifest::encode::{calc_hash, BlockManifest};
 
 fn main() -> std::io::Result<()> {
     let mut manifesto = BufWriter::new(File::create("block_manifest.ron")?);
-    let files = load_assets("world/tree");
+    let files = load_assets("world.tree");
     for (file, entry) in &files {
         let data = BlockManifest {
             id: file.to_string(),
@@ -31,7 +31,7 @@ fn main() -> std::io::Result<()> {
 }
 
 fn load_assets(dir: &str) -> Vec<(String, String)> {
-    let target_dir = read_from_assets(dir).expect("cannot find the folder.");
+    let target_dir = read_dir(dir).expect("cannot find the folder.");
 
     target_dir
         .filter_map(|entry| {
