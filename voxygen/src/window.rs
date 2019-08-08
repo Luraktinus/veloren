@@ -3,6 +3,7 @@ use crate::{
     settings::Settings,
     ui, Error,
 };
+use gilrs::Gilrs;
 use log::{error, warn};
 use serde_derive::{Deserialize, Serialize};
 use std::collections::HashMap;
@@ -56,6 +57,8 @@ pub enum Event {
     Zoom(f32),
     /// A key that the game recognises has been pressed or released.
     InputUpdate(GameInput, bool),
+    /// An analog movement input with values from -1.0 to 1.0.
+    AnalogMovement(Vec2<f32>),
     /// Event that the ui uses.
     Ui(ui::Event),
     /// The view distance has changed.
@@ -67,9 +70,34 @@ pub enum Event {
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, Deserialize, Serialize)]
-pub enum KeyMouse {
+pub enum DigitalInput {
     Key(glutin::VirtualKeyCode),
     Mouse(glutin::MouseButton),
+}
+
+#[derive(Clone, Copy, Debug)]
+pub struct ConAxisInput {
+    key: gilrs::ev::Axis,
+    value: f32,
+}
+
+#[derive(Clone, Copy, Debug)]
+pub struct ConButtonInput {
+    key: gilrs::ev::Button,
+    value: f32,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, Deserialize, Serialize)]
+pub enum ConAxisAction {
+    CameraPanX,
+    CameraPanY,
+    MovementX,
+    MovementY,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, Deserialize, Serialize)]
+pub enum ConButtonAction {
+    GameInput(GameInput),
 }
 
 pub struct Window {
@@ -81,10 +109,13 @@ pub struct Window {
     pub zoom_sensitivity: u32,
     fullscreen: bool,
     needs_refresh_resize: bool,
-    key_map: HashMap<KeyMouse, GameInput>,
+    key_map: HashMap<DigitalInput, GameInput>,
+    con_axis_map: HashMap<gilrs::ev::Axis, ConAxisAction>,
+    con_button_map: HashMap<gilrs::ev::Button, ConButtonAction>,
     keypress_map: HashMap<GameInput, glutin::ElementState>,
     supplement_events: Vec<Event>,
     focused: bool,
+    gilrs: Option<Gilrs>,
 }
 
 impl Window {
@@ -146,7 +177,20 @@ impl Window {
         key_map.insert(settings.controls.roll, GameInput::Roll);
         key_map.insert(settings.controls.interact, GameInput::Interact);
 
+        let mut con_axis_map = HashMap::new();
+        let mut con_button_map = HashMap::new();
+
+        con_axis_map.insert(gilrs::ev::Axis::RightStickX, ConAxisAction::CameraPanX);
+        con_axis_map.insert(gilrs::ev::Axis::RightStickY, ConAxisAction::CameraPanY);
+        con_axis_map.insert(gilrs::ev::Axis::LeftStickX, ConAxisAction::MovementX);
+        con_axis_map.insert(gilrs::ev::Axis::LeftStickY, ConAxisAction::MovementY);
+
         let keypress_map = HashMap::new();
+
+        let gilrs = match Gilrs::new() {
+            Ok(x) => Some(x),
+            Err(_e) => None,
+        };
 
         Ok(Self {
             events_loop,
@@ -158,9 +202,12 @@ impl Window {
             fullscreen: false,
             needs_refresh_resize: false,
             key_map,
-            keypress_map,
+            keypress_map: keypress_map,
+            con_axis_map: con_axis_map,
+            con_button_map: con_button_map,
             supplement_events: vec![],
             focused: true,
+            gilrs: gilrs,
         })
     }
 
@@ -210,7 +257,7 @@ impl Window {
                     }
                     glutin::WindowEvent::ReceivedCharacter(c) => events.push(Event::Char(c)),
                     glutin::WindowEvent::MouseInput { button, state, .. } if cursor_grabbed => {
-                        if let Some(&game_input) = key_map.get(&KeyMouse::Mouse(button)) {
+                        if let Some(&game_input) = key_map.get(&DigitalInput::Mouse(button)) {
                             events.push(Event::InputUpdate(
                                 game_input,
                                 state == glutin::ElementState::Pressed,
@@ -219,7 +266,7 @@ impl Window {
                     }
                     glutin::WindowEvent::KeyboardInput { input, .. } => match input.virtual_keycode
                     {
-                        Some(key) => match key_map.get(&KeyMouse::Key(key)) {
+                        Some(key) => match key_map.get(&DigitalInput::Key(key)) {
                             Some(GameInput::Fullscreen) => {
                                 if input.state == glutin::ElementState::Pressed
                                     && !Self::is_event_key_held(keypress_map, GameInput::Fullscreen)
@@ -302,6 +349,10 @@ impl Window {
 
         if toggle_fullscreen {
             self.fullscreen(!self.is_fullscreen());
+        }
+
+        if let Some(gilrs) = self.gilrs {
+            while let Some(event) = gilrs.next_event() {}
         }
 
         events
