@@ -215,7 +215,7 @@ impl<'a> System<'a> for Sys {
                         on_ground = true;
 
                         if !was_on_ground {
-                            event_emitter.emit(Event::LandOnGround { entity, vel: vel.0 });
+                            event_emitter.emit(Event::Landed { entity, vel: vel.0 });
                         }
                     }
 

@@ -3,7 +3,7 @@ pub use sphynx::Uid;
 
 use crate::{
     comp,
-    event::EventBus,
+    event::{Event, EventBus},
     msg::{EcsCompPacket, EcsResPacket},
     sys,
     terrain::{Block, TerrainChunk, TerrainMap},
@@ -288,7 +288,7 @@ impl State {
     }
 
     /// Execute a single tick, simulating the game state by the given duration.
-    pub fn tick(&mut self, dt: Duration) {
+    pub fn tick(&mut self, dt: Duration) -> impl ExactSizeIterator<Item = Event> {
         // Change the time accordingly.
         self.ecs.write_resource::<TimeOfDay>().0 += dt.as_secs_f64() * DAY_CYCLE_FACTOR;
         self.ecs.write_resource::<Time>().0 += dt.as_secs_f64();
@@ -319,6 +319,15 @@ impl State {
             &mut self.ecs.write_resource::<BlockChange>().blocks,
             Default::default(),
         );
+
+        // Handle local game events
+        let events = self.ecs.read_resource::<EventBus>().recv_all();
+        for event in &events {
+            match event {
+                _ => {} // Nothing yet
+            }
+        }
+        events.into_iter()
     }
 
     /// Clean up the state after a tick.

@@ -207,44 +207,6 @@ impl Server {
         client.allow_state(ClientState::Character);
     }
 
-    /// Handle events coming through via the event bus
-    fn handle_events(&mut self) {
-        let terrain = self.state.ecs().read_resource::<TerrainMap>();
-        let mut block_change = self.state.ecs().write_resource::<BlockChange>();
-        let mut stats = self.state.ecs().write_storage::<comp::Stats>();
-
-        for event in self.state.ecs().read_resource::<EventBus>().recv_all() {
-            match event {
-                GameEvent::LandOnGround { entity, vel } => {
-                    if let Some(stats) = stats.get_mut(entity) {
-                        let falldmg = (vel.z / 1.5 + 10.0) as i32;
-                        if falldmg < 0 {
-                            stats.health.change_by(falldmg, comp::HealthSource::World);
-                        }
-                    }
-                }
-                GameEvent::Explosion { pos, radius } => {
-                    const RAYS: usize = 500;
-
-                    for _ in 0..RAYS {
-                        let dir = Vec3::new(
-                            rand::random::<f32>() - 0.5,
-                            rand::random::<f32>() - 0.5,
-                            rand::random::<f32>() - 0.5,
-                        )
-                        .normalized();
-
-                        let _ = terrain
-                            .ray(pos, pos + dir * radius)
-                            .until(|_| rand::random::<f32>() < 0.05)
-                            .for_each(|pos| block_change.set(pos, Block::empty()))
-                            .cast();
-                    }
-                }
-            }
-        }
-    }
-
     /// Execute a single server tick, handle input and update the game state by the given duration.
     pub fn tick(&mut self, _input: Input, dt: Duration) -> Result<Vec<Event>, Error> {
         // This tick function is the centre of the Veloren universe. Most server-side things are
@@ -275,11 +237,43 @@ impl Server {
         frontend_events.append(&mut self.handle_new_connections()?);
         frontend_events.append(&mut self.handle_new_messages()?);
 
-        // Handle game events
-        self.handle_events();
+        // 4) Tick the client's State, handle game events
+        let events = self.state.tick(dt);
+        {
+            let terrain = self.state.ecs().read_resource::<TerrainMap>();
+            let mut block_change = self.state.ecs().write_resource::<BlockChange>();
+            let mut stats = self.state.ecs().write_storage::<comp::Stats>();
+            for event in events {
+                match event {
+                    GameEvent::Landed { entity, vel } => {
+                        if let Some(stats) = stats.get_mut(entity) {
+                            let falldmg = (vel.z / 1.5 + 10.0) as i32;
+                            if falldmg < 0 {
+                                stats.health.change_by(falldmg, comp::HealthSource::World);
+                            }
+                        }
+                    }
+                    GameEvent::Explosion { pos, radius } => {
+                        const RAYS: usize = 500;
 
-        // 4) Tick the client's LocalState.
-        self.state.tick(dt);
+                        for _ in 0..RAYS {
+                            let dir = Vec3::new(
+                                rand::random::<f32>() - 0.5,
+                                rand::random::<f32>() - 0.5,
+                                rand::random::<f32>() - 0.5,
+                            )
+                            .normalized();
+
+                            let _ = terrain
+                                .ray(pos, pos + dir * radius)
+                                .until(|_| rand::random::<f32>() < 0.05)
+                                .for_each(|pos| block_change.set(pos, Block::empty()))
+                                .cast();
+                        }
+                    }
+                }
+            }
+        }
 
         // Tick the world
         self.world.tick(dt);

@@ -3,7 +3,7 @@ use std::{collections::VecDeque, ops::DerefMut, sync::Mutex};
 use vek::*;
 
 pub enum Event {
-    LandOnGround { entity: EcsEntity, vel: Vec3<f32> },
+    Landed { entity: EcsEntity, vel: Vec3<f32> },
     Explosion { pos: Vec3<f32>, radius: f32 },
 }
 
@@ -24,8 +24,8 @@ impl EventBus {
         self.queue.lock().unwrap().push_front(event);
     }
 
-    pub fn recv_all(&self) -> impl ExactSizeIterator<Item = Event> {
-        std::mem::replace(self.queue.lock().unwrap().deref_mut(), VecDeque::new()).into_iter()
+    pub fn recv_all(&self) -> VecDeque<Event> {
+        std::mem::replace(self.queue.lock().unwrap().deref_mut(), VecDeque::new())
     }
 }
 
