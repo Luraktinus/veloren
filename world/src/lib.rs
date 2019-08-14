@@ -20,6 +20,7 @@ use common::{
     vol::{ReadVol, VolSize, Vox, WriteVol},
 };
 use rand::Rng;
+use std::path::{Path, PathBuf};
 use std::time::Duration;
 use vek::*;
 
@@ -30,12 +31,14 @@ pub enum Error {
 
 pub struct World {
     sim: sim::WorldSim,
+    target: PathBuf,
 }
 
 impl World {
     pub fn generate(seed: u32) -> Self {
         Self {
             sim: sim::WorldSim::generate(seed),
+            target: Path::new("./world").to_owned(),
         }
     }
 

@@ -17,6 +17,7 @@ use common::{
 use noise::{BasicMulti, HybridMulti, MultiFractal, NoiseFn, RidgedMulti, Seedable, SuperSimplex};
 use rand::{Rng, SeedableRng};
 use rand_chacha::ChaChaRng;
+use serde_derive::{Deserialize, Serialize};
 use std::ops::{Add, Div, Mul, Neg, Sub};
 use vek::*;
 
@@ -44,23 +45,16 @@ pub(crate) struct GenCtx {
     pub cliff_gen: StructureGen2d,
 }
 
-pub struct WorldSim {
-    pub seed: u32,
-    pub(crate) chunks: Vec<SimChunk>,
-    pub(crate) locations: Vec<Location>,
+impl GenCtx {
+    pub(crate) fn from_seed(seed: u32) -> Self {
+        let mut bseed = seed.clone();
 
-    pub(crate) gen_ctx: GenCtx,
-    pub rng: ChaChaRng,
-}
-
-impl WorldSim {
-    pub fn generate(mut seed: u32) -> Self {
         let mut gen_seed = || {
-            seed = seed_expan::diffuse(seed + 1);
-            seed
+            bseed = seed_expan::diffuse(bseed + 1);
+            bseed
         };
 
-        let mut gen_ctx = GenCtx {
+        GenCtx {
             turb_x_nz: SuperSimplex::new().set_seed(gen_seed()),
             turb_y_nz: SuperSimplex::new().set_seed(gen_seed()),
             chaos_nz: RidgedMulti::new().set_octaves(7).set_seed(gen_seed()),
@@ -85,7 +79,22 @@ impl WorldSim {
             structure_gen: StructureGen2d::new(gen_seed(), 32, 24),
             region_gen: StructureGen2d::new(gen_seed(), 400, 96),
             cliff_gen: StructureGen2d::new(gen_seed(), 80, 56),
-        };
+        }
+    }
+}
+
+pub struct WorldSim {
+    pub seed: u32,
+    pub(crate) chunks: Vec<SimChunk>,
+    pub(crate) locations: Vec<Location>,
+
+    pub(crate) gen_ctx: GenCtx,
+    pub rng: ChaChaRng,
+}
+
+impl WorldSim {
+    pub fn generate(seed: u32) -> Self {
+        let mut gen_ctx = GenCtx::from_seed(seed);
 
         let mut chunks = Vec::new();
         for x in 0..WORLD_SIZE.x as i32 {
