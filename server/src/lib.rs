@@ -18,7 +18,10 @@ use crate::{
 use common::{
     comp,
     event::{Event as GameEvent, EventBus},
-    msg::{ClientMsg, ClientState, RequestStateError, ServerError, ServerInfo, ServerMsg},
+    msg::{
+        validate_chat_msg, ChatMsgValidationError, ClientMsg, ClientState, RequestStateError,
+        ServerError, ServerInfo, ServerMsg, MAX_BYTES_CHAT_MSG,
+    },
     net::PostOffice,
     state::{BlockChange, State, TimeOfDay, Uid},
     terrain::{block::Block, TerrainChunk, TerrainChunkSize, TerrainMap},
@@ -705,8 +708,17 @@ impl Server {
                             ClientState::Registered
                             | ClientState::Spectator
                             | ClientState::Dead
-                            | ClientState::Character => new_chat_msgs
-                                .push((Some(entity), ServerMsg::ChatMsg { chat_type, message })),
+                            | ClientState::Character => match validate_chat_msg(&message) {
+                                Ok(()) => new_chat_msgs.push((
+                                    Some(entity),
+                                    ServerMsg::ChatMsg { chat_type, message },
+                                )),
+                                Err(ChatMsgValidationError::TooLong) => log::warn!(
+                                    "Recieved a chat message that's too long (max:{} len:{})",
+                                    MAX_BYTES_CHAT_MSG,
+                                    message.len()
+                                ),
+                            },
                             ClientState::Pending => {}
                         },
                         ClientMsg::PlayerPhysics { pos, vel, ori } => match client.client_state {

@@ -8,7 +8,10 @@ pub use specs::{join::Join, saveload::Marker, Entity as EcsEntity, ReadStorage};
 
 use common::{
     comp,
-    msg::{ClientMsg, ClientState, RequestStateError, ServerError, ServerInfo, ServerMsg},
+    msg::{
+        validate_chat_msg, ChatMsgValidationError, ClientMsg, ClientState, RequestStateError,
+        ServerError, ServerInfo, ServerMsg, MAX_BYTES_CHAT_MSG,
+    },
     net::PostBox,
     state::{State, Uid},
     terrain::{block::Block, chonk::ChonkMetrics, TerrainChunk, TerrainChunkSize},
@@ -219,7 +222,13 @@ impl Client {
     /// Send a chat message to the server.
     #[allow(dead_code)]
     pub fn send_chat(&mut self, msg: String) {
-        self.postbox.send_message(ClientMsg::chat(msg))
+        match validate_chat_msg(&msg) {
+            Ok(()) => self.postbox.send_message(ClientMsg::chat(msg)),
+            Err(ChatMsgValidationError::TooLong) => log::warn!(
+                "Attempted to send a message that's too long (Over {} bytes)",
+                MAX_BYTES_CHAT_MSG
+            ),
+        }
     }
 
     /// Remove all cached terrain
