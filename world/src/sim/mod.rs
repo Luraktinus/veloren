@@ -46,12 +46,10 @@ pub(crate) struct GenCtx {
 }
 
 impl GenCtx {
-    pub(crate) fn from_seed(seed: u32) -> Self {
-        let mut bseed = seed.clone();
-
+    pub(crate) fn from_seed(seed: &mut u32) -> Self {
         let mut gen_seed = || {
-            bseed = seed_expan::diffuse(bseed + 1);
-            bseed
+            *seed = seed_expan::diffuse(*seed + 1);
+            *seed
         };
 
         GenCtx {
@@ -83,6 +81,10 @@ impl GenCtx {
     }
 }
 
+pub(crate) fn get_rng(seed: u32) -> ChaChaRng {
+    ChaChaRng::from_seed(seed_expan::rng_state(seed))
+}
+
 pub struct WorldSim {
     pub seed: u32,
     pub(crate) chunks: Vec<SimChunk>,
@@ -93,8 +95,8 @@ pub struct WorldSim {
 }
 
 impl WorldSim {
-    pub fn generate(seed: u32) -> Self {
-        let mut gen_ctx = GenCtx::from_seed(seed);
+    pub fn generate(mut seed: u32) -> Self {
+        let mut gen_ctx = GenCtx::from_seed(&mut seed);
 
         let mut chunks = Vec::new();
         for x in 0..WORLD_SIZE.x as i32 {
@@ -108,7 +110,7 @@ impl WorldSim {
             chunks,
             locations: Vec::new(),
             gen_ctx,
-            rng: ChaChaRng::from_seed(seed_expan::rng_state(seed)),
+            rng: get_rng(seed),
         };
 
         this.seed_elements();
@@ -306,6 +308,7 @@ impl WorldSim {
     }
 }
 
+#[derive(Serialize, Deserialize)]
 pub struct SimChunk {
     pub chaos: f32,
     pub alt_base: f32,
@@ -321,7 +324,7 @@ pub struct SimChunk {
     pub location: Option<LocationInfo>,
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Serialize, Deserialize)]
 pub struct RegionInfo {
     pub chunk_pos: Vec2<i32>,
     pub block_pos: Vec2<i32>,
@@ -329,7 +332,7 @@ pub struct RegionInfo {
     pub seed: u32,
 }
 
-#[derive(Clone)]
+#[derive(Clone, Serialize, Deserialize)]
 pub struct LocationInfo {
     pub loc_idx: usize,
     pub near: Vec<RegionInfo>,

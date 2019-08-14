@@ -97,7 +97,10 @@ impl Server {
 
         let this = Self {
             state,
-            world: Arc::new(World::generate(settings.world_seed)),
+            world: Arc::new(World::new(
+                settings.world_seed,
+                settings.world_folder.clone(),
+            )),
 
             postoffice: PostOffice::bind(addrs.into())?,
             clients: Clients::empty(),
@@ -117,6 +120,13 @@ impl Server {
             accounts: AuthProvider::new(),
             server_settings: settings,
         };
+
+        let world = this.world.clone();
+        std::thread::spawn(move || {
+            println!("Saving world");
+            world.save().unwrap();
+            println!("Done saving!");
+        });
 
         Ok(this)
     }
