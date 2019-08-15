@@ -303,7 +303,7 @@ impl Server {
         // Handle game events
         self.handle_events();
 
-        let dirtied: Vec<Vec2<i32>> = self
+        let dirtied: HashSet<Vec2<i32>> = self
             .state
             .ecs()
             .read_resource::<BlockChange>()
