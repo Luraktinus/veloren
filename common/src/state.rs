@@ -45,7 +45,7 @@ const MAX_DELTA_TIME: f32 = 1.0;
 
 #[derive(Default)]
 pub struct BlockChange {
-    pub blocks: HashMap<Vec3<i32>, Block>,
+    blocks: HashMap<Vec3<i32>, Block>,
 }
 
 impl BlockChange {
@@ -71,6 +71,21 @@ impl TerrainChanges {
         self.new_chunks.clear();
         self.modified_chunks.clear();
         self.removed_chunks.clear();
+    }
+}
+
+#[derive(Default)]
+pub struct DirtiedChunks {
+    chunks: HashSet<Vec2<i32>>
+}
+
+impl DirtiedChunks {
+    pub fn drain(&mut self) -> hashbrown::hash_set::Drain<Vec2<i32>> {
+        self.chunks.drain()
+    }
+
+    fn add(&mut self, v: Vec2<i32>) {
+        self.chunks.insert(v);
     }
 }
 
@@ -164,6 +179,7 @@ impl State {
         ecs.add_resource(BlockChange::default());
         ecs.add_resource(TerrainChanges::default());
         ecs.add_resource(EventBus::default());
+        ecs.add_resource(DirtiedChunks::default());
     }
 
     /// Register a component with the state's ECS.
@@ -309,12 +325,13 @@ impl State {
 
         // Apply terrain changes
         let mut terrain = self.ecs.write_resource::<TerrainMap>();
+        let mut dc = self.ecs.write_resource::<DirtiedChunks>();
         self.ecs
             .read_resource::<BlockChange>()
             .blocks
             .iter()
             .for_each(|(pos, block)| {
-                println!("{}", TerrainMap::chunk_key(*pos));
+                dc.add(TerrainMap::chunk_key(*pos));
                 let _ = terrain.set(*pos, *block);
             });
         self.ecs.write_resource::<TerrainChanges>().modified_blocks = std::mem::replace(
