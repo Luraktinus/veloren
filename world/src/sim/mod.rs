@@ -23,7 +23,7 @@ use vek::*;
 
 pub const WORLD_SIZE: Vec2<usize> = Vec2 { x: 1024, y: 1024 };
 
-pub(crate) struct GenCtx {
+pub struct GenCtx {
     pub turb_x_nz: SuperSimplex,
     pub turb_y_nz: SuperSimplex,
     pub chaos_nz: RidgedMulti,
@@ -46,7 +46,7 @@ pub(crate) struct GenCtx {
 }
 
 impl GenCtx {
-    pub(crate) fn from_seed(seed: &mut u32) -> Self {
+    pub fn from_seed(seed: &mut u32) -> Self {
         let mut gen_seed = || {
             *seed = seed_expan::diffuse(*seed + 1);
             *seed
@@ -81,16 +81,16 @@ impl GenCtx {
     }
 }
 
-pub(crate) fn get_rng(seed: u32) -> ChaChaRng {
+pub fn get_rng(seed: u32) -> ChaChaRng {
     ChaChaRng::from_seed(seed_expan::rng_state(seed))
 }
 
 pub struct WorldSim {
     pub seed: u32,
-    pub(crate) chunks: Vec<SimChunk>,
-    pub(crate) locations: Vec<Location>,
+    pub chunks: Vec<SimChunk>,
+    pub locations: Vec<Location>,
 
-    pub(crate) gen_ctx: GenCtx,
+    pub gen_ctx: GenCtx,
     pub rng: ChaChaRng,
 }
 
