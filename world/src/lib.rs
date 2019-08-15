@@ -16,7 +16,7 @@ use crate::{
     util::{Sampler, SamplerMut},
 };
 use common::{
-    terrain::{Block, TerrainChunk, TerrainChunkMeta, TerrainChunkSize},
+    terrain::{Block, TerrainChunk, TerrainChunkMeta, TerrainChunkSize, TerrainMap},
     vol::{ReadVol, VolSize, Vox, WriteVol},
 };
 use rand::Rng;
@@ -54,9 +54,9 @@ impl World {
     pub fn new(seed: u32, target: PathBuf) -> Self {
         if target.is_dir() {
             return World::load(target.clone()).unwrap_or_else(|_| {
-                println!("Failed to open {:?}/, moving to {:?}.old/", target, target);
-                std::fs::rename(target.clone(), target.clone().with_extension("old"))
-                    .unwrap_or_else(|_| println!("Ok, something strange is happening here..."));
+                //println!("Failed to open {:?}/, moving to {:?}.old/", target, target);
+                //std::fs::rename(target.clone(), target.clone().with_extension("old"))
+                //    .unwrap_or_else(|_| println!("Ok, something strange is happening here..."));
                 World::generate(seed, target)
             });
         }
@@ -70,6 +70,20 @@ impl World {
         qser(t("seed"), &self.sim.seed)?;
 
         Ok(())
+    }
+
+    pub fn chunk_name(v: Vec2<i32>) -> String {
+        format!("{}_{}", v.x, v.y)
+    }
+
+    pub fn chunk_path(&self, v: Vec2<i32>) -> PathBuf {
+        self.target.join(Self::chunk_name(v))
+    }
+
+    pub fn save_chunks<T: IntoIterator<Item = Vec2<i32>>>(&self, map: &TerrainMap, chunks: T) {
+        for chunk in chunks {
+            qser(self.chunk_path(chunk), map.get_key(chunk).unwrap()).unwrap();
+        }
     }
 
     pub fn load(target: PathBuf) -> std::io::Result<Self> {
@@ -115,6 +129,13 @@ impl World {
 
     pub fn sample_blocks(&self) -> BlockGen {
         BlockGen::new(self, ColumnGen::new(self))
+    }
+
+    pub fn get_chunk(&self, chunk_pos: Vec2<i32>) -> (TerrainChunk, ChunkSupplement) {
+        match qdeser(self.chunk_path(chunk_pos)) {
+            Ok(chunk) => (chunk, ChunkSupplement::default()),
+            Err(_) => self.generate_chunk(chunk_pos),
+        }
     }
 
     pub fn generate_chunk(&self, chunk_pos: Vec2<i32>) -> (TerrainChunk, ChunkSupplement) {

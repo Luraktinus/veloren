@@ -45,7 +45,7 @@ const MAX_DELTA_TIME: f32 = 1.0;
 
 #[derive(Default)]
 pub struct BlockChange {
-    blocks: HashMap<Vec3<i32>, Block>,
+    pub blocks: HashMap<Vec3<i32>, Block>,
 }
 
 impl BlockChange {
@@ -313,6 +313,7 @@ impl State {
             .blocks
             .iter()
             .for_each(|(pos, block)| {
+                println!("{}", TerrainMap::chunk_key(*pos));
                 let _ = terrain.set(*pos, *block);
             });
         self.ecs.write_resource::<TerrainChanges>().modified_blocks = std::mem::replace(
