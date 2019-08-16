@@ -1185,9 +1185,9 @@ impl Server {
     pub fn generate_chunk(&mut self, key: Vec2<i32>) {
         if self.pending_chunks.insert(key) {
             let chunk_tx = self.chunk_tx.clone();
-            let world = self.world_provider.clone();
+            let world_provider = self.world_provider.clone();
             self.thread_pool.execute(move || {
-                let _ = chunk_tx.send((key, world.get_chunk(key)));
+                let _ = chunk_tx.send((key, world_provider.fetch_chunk(key)));
             });
         }
     }
