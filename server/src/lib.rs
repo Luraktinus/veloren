@@ -368,7 +368,8 @@ impl Server {
                         (stats, body)
                     } else {
                         let stats = comp::Stats::new("Wolf".to_string());
-                        let body = comp::Body::QuadrupedMedium(comp::quadruped_medium::Body::random());
+                        let body =
+                            comp::Body::QuadrupedMedium(comp::quadruped_medium::Body::random());
                         (stats, body)
                     };
                     let mut scale = 1.0;
@@ -1224,6 +1225,8 @@ impl Drop for Server {
         println!("Killing server...");
         self.clients.notify_registered(ServerMsg::Shutdown);
         self.world_provider.request_save_message(SaveMsg::END);
-        self.save_handle.take().unwrap().join().unwrap();
+        if let Some(handle) = self.save_handle.take() {
+            handle.join().unwrap();
+        }
     }
 }
