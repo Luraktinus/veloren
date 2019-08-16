@@ -26,6 +26,7 @@ use common::{
     vol::Vox,
     vol::{ReadVol, VolSize},
 };
+use crossbeam::channel;
 use hashbrown::HashSet;
 use log::debug;
 use provider::{Provider, SaveMsg};
@@ -38,6 +39,7 @@ use std::{
     sync::{mpsc, Arc},
     time::Duration,
 };
+use std::{i32, net::SocketAddr, sync::Arc, time::Duration};
 use uvth::{ThreadPool, ThreadPoolBuilder};
 use vek::*;
 use world::{ChunkSupplement, World};
@@ -69,8 +71,8 @@ pub struct Server {
     clients: Clients,
 
     thread_pool: ThreadPool,
-    chunk_tx: mpsc::Sender<(Vec2<i32>, (TerrainChunk, ChunkSupplement))>,
-    chunk_rx: mpsc::Receiver<(Vec2<i32>, (TerrainChunk, ChunkSupplement))>,
+    chunk_tx: channel::Sender<(Vec2<i32>, (TerrainChunk, ChunkSupplement))>,
+    chunk_rx: channel::Receiver<(Vec2<i32>, (TerrainChunk, ChunkSupplement))>,
     pending_chunks: HashSet<Vec2<i32>>,
 
     server_settings: ServerSettings,
@@ -88,7 +90,7 @@ impl Server {
 
     /// Create a new server bound to the given socket.
     pub fn bind<A: Into<SocketAddr>>(addrs: A, settings: ServerSettings) -> Result<Self, Error> {
-        let (chunk_tx, chunk_rx) = mpsc::channel();
+        let (chunk_tx, chunk_rx) = channel::unbounded();
 
         let mut state = State::default();
         state
