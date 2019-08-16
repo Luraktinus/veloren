@@ -15,6 +15,7 @@ pub struct ServerSettings {
     pub world_folder: PathBuf,
     pub admins: Vec<String>,
     pub peaceful: bool,
+    pub save_time: u32,
 }
 
 impl Default for ServerSettings {
@@ -29,6 +30,7 @@ impl Default for ServerSettings {
             world_folder: PathBuf::from("./worldsave"),
             admins: vec![],
             peaceful: false,
+            save_time: 1000,
         }
     }
 }
@@ -67,7 +69,7 @@ impl ServerSettings {
 
     pub fn singleplayer() -> Self {
         Self {
-            address: SocketAddr::from(([0; 4], 14004)),
+            address: SocketAddr::from(([127, 0, 0, 1], 14004)),
             world_seed: 1337,
             server_name: "Singleplayer".to_owned(),
             server_description: "The main feature is loneliness!".to_owned(),
@@ -76,6 +78,7 @@ impl ServerSettings {
             world_folder: PathBuf::from("./worldsave"),
             admins: vec!["singleplayer".to_string()], // TODO: Let the player choose if they want to use admin commands or not
             peaceful: false,
+            save_time: 1000,
         }
     }
 

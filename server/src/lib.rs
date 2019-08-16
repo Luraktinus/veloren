@@ -36,10 +36,9 @@ use std::ops::Deref;
 use std::{
     i32,
     net::SocketAddr,
-    sync::{mpsc, Arc},
-    time::Duration,
+    sync::Arc,
+    time::{Duration, Instant},
 };
-use std::{i32, net::SocketAddr, sync::Arc, time::Duration};
 use uvth::{ThreadPool, ThreadPoolBuilder};
 use vek::*;
 use world::{ChunkSupplement, World};
@@ -80,6 +79,8 @@ pub struct Server {
 
     // TODO: anything but this
     accounts: AuthProvider,
+
+    next_save: Instant,
 }
 
 impl Server {
@@ -103,6 +104,7 @@ impl Server {
 
         let mut provider = Provider::new(settings.world_seed, settings.world_folder.clone());
         let save_handle = Some(provider.init_save_loop());
+        let next_save = Instant::now() + Duration::from_millis(settings.save_time.into());
 
         let this = Self {
             state,
@@ -126,6 +128,8 @@ impl Server {
             },
             accounts: AuthProvider::new(),
             server_settings: settings,
+
+            next_save,
         };
 
         /*let world = this.world.clone();
@@ -310,7 +314,8 @@ impl Server {
         // 4) Tick the client's LocalState.
         self.state.tick(dt);
 
-        {
+        // Write modified chunks to disk
+        if Instant::now() > self.next_save {
             let mut ecs = self.state.ecs_mut();
             let mut dc = ecs.write_resource::<DirtiedChunks>();
             let map = ecs.read_resource::<TerrainMap>();
@@ -319,6 +324,8 @@ impl Server {
                 self.world_provider
                     .set_chunk(i, map.get_key(i).unwrap().clone());
             }
+            self.next_save =
+                Instant::now() + Duration::from_millis(self.server_settings.save_time.into());
         }
         /*self.world_provider.save_chunks(
             self.state.ecs().read_resource::<TerrainMap>().deref(),
