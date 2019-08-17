@@ -27,7 +27,7 @@ use vek::*;
 const DAMAGE_FADE_COEFFICIENT: f64 = 5.0;
 
 pub struct FigureModelCache {
-    models: HashMap<Body, ((Model<FigurePipeline>, SkeletonAttr), u64)>,
+    models: HashMap<(Body, bool, bool), ((Model<FigurePipeline>, SkeletonAttr), u64)>,
 }
 
 impl FigureModelCache {
@@ -42,29 +42,67 @@ impl FigureModelCache {
         renderer: &mut Renderer,
         body: Body,
         tick: u64,
+        first_person: bool,
+        gliding: bool,
     ) -> &(Model<FigurePipeline>, SkeletonAttr) {
-        match self.models.get_mut(&body) {
+        match self.models.get_mut(&(body, first_person, gliding)) {
             Some((_model, last_used)) => {
                 *last_used = tick;
             }
             None => {
                 self.models.insert(
-                    body,
+                    (body, first_person, gliding),
                     (
                         {
                             let bone_meshes = match body {
                                 Body::Humanoid(body) => [
-                                    Some(Self::load_head(body.race, body.body_type)),
-                                    Some(Self::load_chest(body.chest)),
-                                    Some(Self::load_belt(body.belt)),
-                                    Some(Self::load_pants(body.pants)),
+                                    if !first_person {
+                                        Some(Self::load_head(body.race, body.body_type))
+                                    } else {
+                                        None
+                                    },
+                                    if !first_person {
+                                        Some(Self::load_chest(body.chest))
+                                    } else {
+                                        None
+                                    },
+                                    if !first_person {
+                                        Some(Self::load_belt(body.belt))
+                                    } else {
+                                        None
+                                    },
+                                    if !first_person {
+                                        Some(Self::load_pants(body.pants))
+                                    } else {
+                                        None
+                                    },
                                     Some(Self::load_left_hand(body.hand)),
                                     Some(Self::load_right_hand(body.hand)),
-                                    Some(Self::load_left_foot(body.foot)),
-                                    Some(Self::load_right_foot(body.foot)),
-                                    Some(Self::load_weapon(Tool::Hammer)), // TODO: Inventory
-                                    Some(Self::load_left_shoulder(body.shoulder)),
-                                    Some(Self::load_right_shoulder(body.shoulder)),
+                                    if !first_person {
+                                        Some(Self::load_left_foot(body.foot))
+                                    } else {
+                                        None
+                                    },
+                                    if !first_person {
+                                        Some(Self::load_right_foot(body.foot))
+                                    } else {
+                                        None
+                                    },
+                                    if !gliding {
+                                        Some(Self::load_weapon(Tool::Hammer))
+                                    } else {
+                                        None
+                                    }, // TODO: Inventory
+                                    if !first_person {
+                                        Some(Self::load_left_shoulder(body.shoulder))
+                                    } else {
+                                        None
+                                    },
+                                    if !first_person {
+                                        Some(Self::load_right_shoulder(body.shoulder))
+                                    } else {
+                                        None
+                                    },
                                     Some(Self::load_draw()),
                                     None,
                                     None,
@@ -151,7 +189,7 @@ impl FigureModelCache {
             }
         }
 
-        &self.models[&body].0
+        &self.models[&(body, first_person, gliding)].0
     }
 
     pub fn clean(&mut self, tick: u64) {
@@ -648,7 +686,7 @@ impl FigureMgr {
 
             let skeleton_attr = &self
                 .model_cache
-                .get_or_create_model(renderer, *body, tick)
+                .get_or_create_model(renderer, *body, tick, false, false)
                 .1;
 
             match body {
@@ -893,22 +931,26 @@ impl FigureMgr {
                     .get(&entity)
                     .map(|state| (state.locals(), state.bone_consts())),
             } {
-                let model = &self
-                    .model_cache
-                    .get_or_create_model(renderer, *body, tick)
-                    .0;
-
                 // Don't render the player's body while in first person mode
-                if camera.get_mode() == CameraMode::FirstPerson
+                let fp = camera.get_mode() == CameraMode::FirstPerson
                     && client
                         .state()
                         .read_storage::<comp::Body>()
                         .get(client.entity())
                         .is_some()
-                    && entity == client.entity()
-                {
-                    continue;
-                }
+                    && entity == client.entity();
+
+                let gliding = client
+                    .state()
+                    .read_storage::<comp::ActionState>()
+                    .get(client.entity())
+                    .unwrap_or(&comp::ActionState::default())
+                    .gliding;
+
+                let model = &self
+                    .model_cache
+                    .get_or_create_model(renderer, *body, tick, fp, gliding)
+                    .0;
 
                 renderer.render_figure(model, globals, locals, bone_consts, lights);
             } else {

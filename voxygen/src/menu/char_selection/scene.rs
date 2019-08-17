@@ -135,7 +135,13 @@ impl Scene {
 
         let model = &self
             .figure_model_cache
-            .get_or_create_model(renderer, Body::Humanoid(body), client.get_tick())
+            .get_or_create_model(
+                renderer,
+                Body::Humanoid(body),
+                client.get_tick(),
+                false,
+                false,
+            )
             .0;
 
         renderer.render_figure(
