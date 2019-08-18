@@ -1,7 +1,7 @@
 use specs::{Component, FlaggedStorage, HashMapStorage};
 use specs_idvs::IDVStorage;
 
-#[derive(Clone, Copy, Debug, PartialEq, Serialize, Deserialize, Eq, Hash)]
+#[derive(Clone, Copy, Debug, PartialEq, Serialize, Deserialize)]
 pub struct ActionState {
     pub moving: bool,
     pub on_ground: bool,

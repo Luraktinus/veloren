@@ -12,7 +12,7 @@ const THIRD_PERSON_INTERP_TIME: f32 = 0.1;
 pub const MIN_ZOOM: f32 = 0.1;
 
 // Possible TODO: Add more modes
-#[derive(PartialEq, Clone, Copy, Eq, Hash)]
+#[derive(PartialEq, Clone, Copy)]
 pub enum CameraMode {
     FirstPerson,
     ThirdPerson,
