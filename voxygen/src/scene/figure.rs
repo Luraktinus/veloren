@@ -27,11 +27,15 @@ use vek::*;
 
 const DAMAGE_FADE_COEFFICIENT: f64 = 5.0;
 
+#[derive(PartialEq, Clone, Eq, Hash)]
+enum PlayerModelVariation {
+    DefaultModel,
+    FirstPersonWielding,
+    FirstPersonUnarmed,
+}
+
 pub struct FigureModelCache {
-    models: HashMap<
-        (Body, Option<CameraMode>, Option<ActionState>),
-        ((Model<FigurePipeline>, SkeletonAttr), u64),
-    >,
+    models: HashMap<(Body, PlayerModelVariation), ((Model<FigurePipeline>, SkeletonAttr), u64)>,
 }
 
 impl FigureModelCache {
@@ -49,71 +53,89 @@ impl FigureModelCache {
         camera_mode: Option<CameraMode>,
         action_state: Option<ActionState>,
     ) -> &(Model<FigurePipeline>, SkeletonAttr) {
-        match self.models.get_mut(&(body, camera_mode, action_state)) {
+        let player_model_variation = match camera_mode.unwrap_or_default() {
+            CameraMode::FirstPerson => {
+                if action_state.unwrap_or_default().wielding {
+                    PlayerModelVariation::FirstPersonWielding
+                } else {
+                    PlayerModelVariation::FirstPersonUnarmed
+                }
+            }
+            CameraMode::ThirdPerson => PlayerModelVariation::DefaultModel,
+        };
+
+        let key = (body, player_model_variation);
+
+        // TODO: self.models.entry(key).or_insert_with(extracted_and_refactored_function)
+        match self.models.get_mut(&key) {
             Some((_model, last_used)) => {
                 *last_used = tick;
             }
             None => {
                 self.models.insert(
-                    (body, camera_mode, action_state),
+                    key.clone(),
                     (
                         {
                             let bone_meshes = match body {
                                 Body::Humanoid(body) => [
-                                    match camera_mode.unwrap_or_default() {
-                                        CameraMode::FirstPerson => None,
-                                        CameraMode::ThirdPerson => {
+                                    match &key.1 {
+                                        PlayerModelVariation::DefaultModel => {
                                             Some(Self::load_head(body.race, body.body_type))
                                         }
+                                        _ => None,
                                     },
-                                    match camera_mode.unwrap_or_default() {
-                                        CameraMode::FirstPerson => None,
-                                        CameraMode::ThirdPerson => {
+                                    match &key.1 {
+                                        PlayerModelVariation::DefaultModel => {
                                             Some(Self::load_chest(body.chest))
                                         }
+                                        _ => None,
                                     },
-                                    match camera_mode.unwrap_or_default() {
-                                        CameraMode::FirstPerson => None,
-                                        CameraMode::ThirdPerson => Some(Self::load_belt(body.belt)),
+                                    match &key.1 {
+                                        PlayerModelVariation::DefaultModel => {
+                                            Some(Self::load_belt(body.belt))
+                                        }
+                                        _ => None,
                                     },
-                                    match camera_mode.unwrap_or_default() {
-                                        CameraMode::FirstPerson => None,
-                                        CameraMode::ThirdPerson => {
+                                    match &key.1 {
+                                        PlayerModelVariation::DefaultModel => {
                                             Some(Self::load_pants(body.pants))
                                         }
+                                        _ => None,
                                     },
                                     Some(Self::load_left_hand(body.hand)),
                                     Some(Self::load_right_hand(body.hand)),
-                                    match camera_mode.unwrap_or_default() {
-                                        CameraMode::FirstPerson => None,
-                                        CameraMode::ThirdPerson => {
+                                    match &key.1 {
+                                        PlayerModelVariation::DefaultModel => {
                                             Some(Self::load_left_foot(body.foot))
                                         }
+                                        _ => None,
                                     },
-                                    match camera_mode.unwrap_or_default() {
-                                        CameraMode::FirstPerson => None,
-                                        CameraMode::ThirdPerson => {
+                                    match &key.1 {
+                                        PlayerModelVariation::DefaultModel => {
                                             Some(Self::load_right_foot(body.foot))
                                         }
+                                        _ => None,
                                     },
-                                    if camera_mode.unwrap_or_default() != CameraMode::FirstPerson
-                                        || action_state.unwrap_or_default().wielding
-                                    {
-                                        Some(Self::load_weapon(Tool::Hammer))
-                                    } else {
-                                        None
+                                    match &key.1 {
+                                        PlayerModelVariation::DefaultModel => {
+                                            Some(Self::load_weapon(Tool::Hammer))
+                                        }
+                                        PlayerModelVariation::FirstPersonWielding => {
+                                            Some(Self::load_weapon(Tool::Hammer))
+                                        }
+                                        PlayerModelVariation::FirstPersonUnarmed => None,
                                     },
-                                    match camera_mode.unwrap_or_default() {
-                                        CameraMode::FirstPerson => None,
-                                        CameraMode::ThirdPerson => {
+                                    match &key.1 {
+                                        PlayerModelVariation::DefaultModel => {
                                             Some(Self::load_left_shoulder(body.shoulder))
                                         }
+                                        _ => None,
                                     },
-                                    match camera_mode.unwrap_or_default() {
-                                        CameraMode::FirstPerson => None,
-                                        CameraMode::ThirdPerson => {
+                                    match &key.1 {
+                                        PlayerModelVariation::DefaultModel => {
                                             Some(Self::load_right_shoulder(body.shoulder))
                                         }
+                                        _ => None,
                                     },
                                     Some(Self::load_draw()),
                                     None,
@@ -201,7 +223,7 @@ impl FigureModelCache {
             }
         }
 
-        &self.models[&(body, camera_mode, action_state)].0
+        &self.models[&key].0
     }
 
     pub fn clean(&mut self, tick: u64) {
