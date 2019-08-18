@@ -12,7 +12,7 @@ use crate::{
 use client::Client;
 use common::{
     assets,
-    comp::{self, humanoid, item::Tool, object, quadruped, quadruped_medium, Body},
+    comp::{self, humanoid, item::Tool, object, quadruped, quadruped_medium, ActionState, Body},
     figure::Segment,
     terrain::TerrainChunkSize,
     vol::VolSize,
@@ -22,12 +22,16 @@ use hashbrown::HashMap;
 use log::warn;
 use specs::{Entity as EcsEntity, Join};
 use std::f32;
+use std::option::Option;
 use vek::*;
 
 const DAMAGE_FADE_COEFFICIENT: f64 = 5.0;
 
 pub struct FigureModelCache {
-    models: HashMap<(Body, bool, bool), ((Model<FigurePipeline>, SkeletonAttr), u64)>,
+    models: HashMap<
+        (Body, Option<CameraMode>, Option<ActionState>),
+        ((Model<FigurePipeline>, SkeletonAttr), u64),
+    >,
 }
 
 impl FigureModelCache {
@@ -42,66 +46,74 @@ impl FigureModelCache {
         renderer: &mut Renderer,
         body: Body,
         tick: u64,
-        first_person: bool,
-        gliding: bool,
+        camera_mode: Option<CameraMode>,
+        action_state: Option<ActionState>,
     ) -> &(Model<FigurePipeline>, SkeletonAttr) {
-        match self.models.get_mut(&(body, first_person, gliding)) {
+        match self.models.get_mut(&(body, camera_mode, action_state)) {
             Some((_model, last_used)) => {
                 *last_used = tick;
             }
             None => {
                 self.models.insert(
-                    (body, first_person, gliding),
+                    (body, camera_mode, action_state),
                     (
                         {
                             let bone_meshes = match body {
                                 Body::Humanoid(body) => [
-                                    if !first_person {
-                                        Some(Self::load_head(body.race, body.body_type))
-                                    } else {
-                                        None
+                                    match camera_mode.unwrap_or_default() {
+                                        CameraMode::FirstPerson => None,
+                                        CameraMode::ThirdPerson => {
+                                            Some(Self::load_head(body.race, body.body_type))
+                                        }
                                     },
-                                    if !first_person {
-                                        Some(Self::load_chest(body.chest))
-                                    } else {
-                                        None
+                                    match camera_mode.unwrap_or_default() {
+                                        CameraMode::FirstPerson => None,
+                                        CameraMode::ThirdPerson => {
+                                            Some(Self::load_chest(body.chest))
+                                        }
                                     },
-                                    if !first_person {
-                                        Some(Self::load_belt(body.belt))
-                                    } else {
-                                        None
+                                    match camera_mode.unwrap_or_default() {
+                                        CameraMode::FirstPerson => None,
+                                        CameraMode::ThirdPerson => Some(Self::load_belt(body.belt)),
                                     },
-                                    if !first_person {
-                                        Some(Self::load_pants(body.pants))
-                                    } else {
-                                        None
+                                    match camera_mode.unwrap_or_default() {
+                                        CameraMode::FirstPerson => None,
+                                        CameraMode::ThirdPerson => {
+                                            Some(Self::load_pants(body.pants))
+                                        }
                                     },
                                     Some(Self::load_left_hand(body.hand)),
                                     Some(Self::load_right_hand(body.hand)),
-                                    if !first_person {
-                                        Some(Self::load_left_foot(body.foot))
-                                    } else {
-                                        None
+                                    match camera_mode.unwrap_or_default() {
+                                        CameraMode::FirstPerson => None,
+                                        CameraMode::ThirdPerson => {
+                                            Some(Self::load_left_foot(body.foot))
+                                        }
                                     },
-                                    if !first_person {
-                                        Some(Self::load_right_foot(body.foot))
-                                    } else {
-                                        None
+                                    match camera_mode.unwrap_or_default() {
+                                        CameraMode::FirstPerson => None,
+                                        CameraMode::ThirdPerson => {
+                                            Some(Self::load_right_foot(body.foot))
+                                        }
                                     },
-                                    if !gliding {
+                                    if camera_mode.unwrap_or_default() != CameraMode::FirstPerson
+                                        || action_state.unwrap_or_default().wielding
+                                    {
                                         Some(Self::load_weapon(Tool::Hammer))
                                     } else {
                                         None
-                                    }, // TODO: Inventory
-                                    if !first_person {
-                                        Some(Self::load_left_shoulder(body.shoulder))
-                                    } else {
-                                        None
                                     },
-                                    if !first_person {
-                                        Some(Self::load_right_shoulder(body.shoulder))
-                                    } else {
-                                        None
+                                    match camera_mode.unwrap_or_default() {
+                                        CameraMode::FirstPerson => None,
+                                        CameraMode::ThirdPerson => {
+                                            Some(Self::load_left_shoulder(body.shoulder))
+                                        }
+                                    },
+                                    match camera_mode.unwrap_or_default() {
+                                        CameraMode::FirstPerson => None,
+                                        CameraMode::ThirdPerson => {
+                                            Some(Self::load_right_shoulder(body.shoulder))
+                                        }
                                     },
                                     Some(Self::load_draw()),
                                     None,
@@ -189,7 +201,7 @@ impl FigureModelCache {
             }
         }
 
-        &self.models[&(body, first_person, gliding)].0
+        &self.models[&(body, camera_mode, action_state)].0
     }
 
     pub fn clean(&mut self, tick: u64) {
@@ -686,7 +698,7 @@ impl FigureMgr {
 
             let skeleton_attr = &self
                 .model_cache
-                .get_or_create_model(renderer, *body, tick, false, false)
+                .get_or_create_model(renderer, *body, tick, None, None)
                 .1;
 
             match body {
@@ -932,24 +944,27 @@ impl FigureMgr {
                     .map(|state| (state.locals(), state.bone_consts())),
             } {
                 // Don't render the player's body while in first person mode
-                let fp = camera.get_mode() == CameraMode::FirstPerson
-                    && client
-                        .state()
-                        .read_storage::<comp::Body>()
-                        .get(client.entity())
-                        .is_some()
-                    && entity == client.entity();
+                let player_camera_mode = if client
+                    .state()
+                    .read_storage::<comp::Body>()
+                    .get(client.entity())
+                    .is_some()
+                    && entity == client.entity()
+                {
+                    Some(camera.get_mode())
+                } else {
+                    None
+                };
 
-                let gliding = client
+                let action_state = client
                     .state()
                     .read_storage::<comp::ActionState>()
                     .get(client.entity())
-                    .unwrap_or(&comp::ActionState::default())
-                    .gliding;
+                    .map(|ast| ast.clone());
 
                 let model = &self
                     .model_cache
-                    .get_or_create_model(renderer, *body, tick, fp, gliding)
+                    .get_or_create_model(renderer, *body, tick, player_camera_mode, action_state)
                     .0;
 
                 renderer.render_figure(model, globals, locals, bone_consts, lights);

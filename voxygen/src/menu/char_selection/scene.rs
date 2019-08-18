@@ -139,8 +139,8 @@ impl Scene {
                 renderer,
                 Body::Humanoid(body),
                 client.get_tick(),
-                false,
-                false,
+                None,
+                None,
             )
             .0;
 
