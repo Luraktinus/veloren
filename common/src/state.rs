@@ -45,7 +45,7 @@ const MAX_DELTA_TIME: f32 = 1.0;
 
 #[derive(Default)]
 pub struct BlockChange {
-    pub blocks: HashMap<Vec3<i32>, Block>,
+    blocks: HashMap<Vec3<i32>, Block>,
 }
 
 impl BlockChange {

@@ -64,7 +64,6 @@ struct SpawnPoint(Vec3<f32>);
 pub struct Server {
     state: State,
     world_provider: Arc<Provider>,
-    save_handle: Option<std::thread::JoinHandle<()>>,
 
     postoffice: PostOffice<ServerMsg, ClientMsg>,
     clients: Clients,
@@ -104,13 +103,11 @@ impl Server {
         state.ecs_mut().write_resource::<TimeOfDay>().0 = settings.start_time;
 
         let mut provider = Provider::new(settings.world_seed, settings.world_folder.clone());
-        let save_handle = Some(provider.init_save_loop());
-        let next_save = Instant::now() + Duration::from_millis(settings.save_time.into());
+        let next_save = Instant::now() + settings.save_time;
 
         let this = Self {
             state,
             world_provider: Arc::new(provider),
-            save_handle,
 
             postoffice: PostOffice::bind(addrs.into())?,
             clients: Clients::empty(),
@@ -314,8 +311,7 @@ impl Server {
                     self.world_provider
                         .set_chunk(i, map.get_key(i).unwrap().clone());
                 }
-                self.next_save =
-                    Instant::now() + Duration::from_millis(self.server_settings.save_time.into());
+                self.next_save = Instant::now() + self.server_settings.save_time;
             }
             {
                 println!("Chunks: {:?}", self.dirtied_chunks);
@@ -1234,9 +1230,5 @@ impl Drop for Server {
     fn drop(&mut self) {
         log::info!("Shutting down server...");
         self.clients.notify_registered(ServerMsg::Shutdown);
-        self.world_provider.request_save_message(SaveMsg::END);
-        if let Some(handle) = self.save_handle.take() {
-            handle.join().unwrap();
-        }
     }
 }
