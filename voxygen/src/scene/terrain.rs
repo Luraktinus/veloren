@@ -64,28 +64,28 @@ fn sprite_config_for(kind: BlockKind) -> Option<SpriteConfig> {
         }),
 
         BlockKind::BlueFlower => Some(SpriteConfig {
-            variations: 2,
-            wind_sway: 0.3,
+            variations: 4,
+            wind_sway: 0.1,
         }),
         BlockKind::PinkFlower => Some(SpriteConfig {
-            variations: 3,
-            wind_sway: 0.3,
+            variations: 4,
+            wind_sway: 0.1,
         }),
         BlockKind::RedFlower => Some(SpriteConfig {
-            variations: 1,
-            wind_sway: 0.3,
+            variations: 2,
+            wind_sway: 0.1,
         }),
         BlockKind::WhiteFlower => Some(SpriteConfig {
             variations: 1,
-            wind_sway: 0.3,
+            wind_sway: 0.1,
         }),
         BlockKind::YellowFlower => Some(SpriteConfig {
             variations: 1,
-            wind_sway: 0.3,
+            wind_sway: 0.1,
         }),
         BlockKind::Sunflower => Some(SpriteConfig {
             variations: 2,
-            wind_sway: 0.3,
+            wind_sway: 0.1,
         }),
 
         BlockKind::LongGrass => Some(SpriteConfig {
@@ -225,6 +225,14 @@ impl Terrain {
                     make_model("voxygen.voxel.sprite.flowers.flower_blue_2"),
                 ),
                 (
+                    (BlockKind::BlueFlower, 2),
+                    make_model("voxygen.voxel.sprite.flowers.flower_blue_3"),
+                ),
+                (
+                    (BlockKind::BlueFlower, 3),
+                    make_model("voxygen.voxel.sprite.flowers.flower_blue_4"),
+                ),
+                (
                     (BlockKind::PinkFlower, 0),
                     make_model("voxygen.voxel.sprite.flowers.flower_pink_1"),
                 ),
@@ -237,12 +245,20 @@ impl Terrain {
                     make_model("voxygen.voxel.sprite.flowers.flower_pink_3"),
                 ),
                 (
+                    (BlockKind::PinkFlower, 3),
+                    make_model("voxygen.voxel.sprite.flowers.flower_pink_4"),
+                ),
+                (
                     (BlockKind::PurpleFlower, 0),
                     make_model("voxygen.voxel.sprite.flowers.flower_purple_1"),
                 ),
                 (
                     (BlockKind::RedFlower, 0),
                     make_model("voxygen.voxel.sprite.flowers.flower_red_1"),
+                ),
+                (
+                    (BlockKind::RedFlower, 1),
+                    make_model("voxygen.voxel.sprite.flowers.flower_red_2"),
                 ),
                 (
                     (BlockKind::WhiteFlower, 0),
