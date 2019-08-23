@@ -62,6 +62,22 @@ fn sprite_config_for(kind: BlockKind) -> Option<SpriteConfig> {
             variations: 1,
             wind_sway: 0.0,
         }),
+        BlockKind::RoundCactus => Some(SpriteConfig {
+            variations: 1,
+            wind_sway: 0.0,
+        }),
+        BlockKind::ShortCactus => Some(SpriteConfig {
+            variations: 1,
+            wind_sway: 0.0,
+        }),
+        BlockKind::MedFlatCactus => Some(SpriteConfig {
+            variations: 1,
+            wind_sway: 0.0,
+        }),
+        BlockKind::ShortFlatCactus => Some(SpriteConfig {
+            variations: 1,
+            wind_sway: 0.0,
+        }),
 
         BlockKind::BlueFlower => Some(SpriteConfig {
             variations: 4,
@@ -209,6 +225,22 @@ impl Terrain {
                 (
                     (BlockKind::BarrelCactus, 0),
                     make_model("voxygen.voxel.sprite.cacti.barrel_cactus"),
+                ),
+                (
+                    (BlockKind::RoundCactus, 0),
+                    make_model("voxygen.voxel.sprite.cacti.cactus_round"),
+                ),
+                (
+                    (BlockKind::ShortCactus, 0),
+                    make_model("voxygen.voxel.sprite.cacti.cactus_short"),
+                ),
+                (
+                    (BlockKind::MedFlatCactus, 0),
+                    make_model("voxygen.voxel.sprite.cacti.flat_cactus_med"),
+                ),
+                (
+                    (BlockKind::ShortFlatCactus, 0),
+                    make_model("voxygen.voxel.sprite.cacti.flat_cactus_short"),
                 ),
                 // Fruit
                 (

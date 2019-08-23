@@ -291,11 +291,20 @@ impl<'a> BlockGen<'a> {
             && temp > CONFIG.desert_temp
             && (marble * 4423.5).fract() < 0.0005
         {
+            let large_cacti = [BlockKind::LargeCactus, BlockKind::MedFlatCactus];
+
+            let small_cacti = [
+                BlockKind::BarrelCactus,
+                BlockKind::RoundCactus,
+                BlockKind::ShortCactus,
+                BlockKind::ShortFlatCactus,
+            ];
+
             Some(Block::new(
                 if (height * 1271.0).fract() < 0.5 {
-                    BlockKind::LargeCactus
+                    large_cacti[(height * 0.2) as usize % large_cacti.len()]
                 } else {
-                    BlockKind::BarrelCactus
+                    small_cacti[(height * 0.3) as usize % small_cacti.len()]
                 },
                 Rgb::broadcast(0),
             ))
