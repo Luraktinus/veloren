@@ -271,6 +271,7 @@ impl<'a> BlockGen<'a> {
                 BlockKind::WhiteFlower,
                 BlockKind::YellowFlower,
                 BlockKind::Sunflower,
+                BlockKind::Mushroom,
             ];
 
             let grasses = [

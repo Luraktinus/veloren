@@ -121,6 +121,10 @@ fn sprite_config_for(kind: BlockKind) -> Option<SpriteConfig> {
             variations: 1,
             wind_sway: 0.0,
         }),
+        BlockKind::Mushroom => Some(SpriteConfig {
+            variations: 10,
+            wind_sway: 0.0,
+        }),
         _ => None,
     }
 }
@@ -369,6 +373,47 @@ impl Terrain {
                     (BlockKind::ShortGrass, 4),
                     make_model("voxygen.voxel.sprite.grass.grass_short_5"),
                 ),
+                (
+                    (BlockKind::Mushroom, 0),
+                    make_model("voxygen.voxel.sprite.mushrooms.mushroom-0"),
+                ),
+                (
+                    (BlockKind::Mushroom, 1),
+                    make_model("voxygen.voxel.sprite.mushrooms.mushroom-1"),
+                ),
+                (
+                    (BlockKind::Mushroom, 2),
+                    make_model("voxygen.voxel.sprite.mushrooms.mushroom-2"),
+                ),
+                (
+                    (BlockKind::Mushroom, 3),
+                    make_model("voxygen.voxel.sprite.mushrooms.mushroom-3"),
+                ),
+                (
+                    (BlockKind::Mushroom, 4),
+                    make_model("voxygen.voxel.sprite.mushrooms.mushroom-4"),
+                ),
+                (
+                    (BlockKind::Mushroom, 5),
+                    make_model("voxygen.voxel.sprite.mushrooms.mushroom-5"),
+                ),
+                (
+                    (BlockKind::Mushroom, 6),
+                    make_model("voxygen.voxel.sprite.mushrooms.mushroom-6"),
+                ),
+                (
+                    (BlockKind::Mushroom, 7),
+                    make_model("voxygen.voxel.sprite.mushrooms.mushroom-7"),
+                ),
+                (
+                    (BlockKind::Mushroom, 8),
+                    make_model("voxygen.voxel.sprite.mushrooms.mushroom-8"),
+                ),
+                (
+                    (BlockKind::Mushroom, 9),
+                    make_model("voxygen.voxel.sprite.mushrooms.mushroom-9"),
+                ),
+                
             ]
             .into_iter()
             .collect(),
