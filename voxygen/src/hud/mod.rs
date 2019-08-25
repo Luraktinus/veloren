@@ -156,8 +156,7 @@ pub enum Event {
     ChangeFOV(u16),
     CrosshairTransp(f32),
     CrosshairType(CrosshairType),
-    ToggleXpBar(XpBar),
-    ToggleEnBars(EnBars),
+    ToggleXpBar(XpBar),    
     ToggleBarNumbers(BarNumbers),
     ToggleShortcutNumbers(ShortcutNumbers),
     UiScale(ScaleChange),
@@ -187,11 +186,6 @@ pub enum CrosshairType {
 pub enum XpBar {
     Always,
     OnGain,
-}
-#[derive(Clone, Copy, Debug, Serialize, Deserialize)]
-pub enum EnBars {
-    Always,
-    OnLoss,
 }
 
 #[derive(Clone, Copy, Debug, Serialize, Deserialize)]
@@ -790,10 +784,7 @@ impl Hud {
                     }
                     settings_window::Event::ToggleXpBar(xp_bar) => {
                         events.push(Event::ToggleXpBar(xp_bar));
-                    }
-                    settings_window::Event::ToggleEnBars(en_bars) => {
-                        events.push(Event::ToggleEnBars(en_bars));
-                    }
+                    }                    
                     settings_window::Event::ToggleBarNumbers(bar_numbers) => {
                         events.push(Event::ToggleBarNumbers(bar_numbers));
                     }
