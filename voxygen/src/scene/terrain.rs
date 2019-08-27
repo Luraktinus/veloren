@@ -106,16 +106,16 @@ fn sprite_config_for(kind: BlockKind) -> Option<SpriteConfig> {
         }),
 
         BlockKind::LongGrass => Some(SpriteConfig {
-            variations: 5,
-            wind_sway: 1.0,
+            variations: 7,
+            wind_sway: 0.8,
         }),
         BlockKind::MediumGrass => Some(SpriteConfig {
             variations: 5,
-            wind_sway: 1.0,
+            wind_sway: 0.5,
         }),
         BlockKind::ShortGrass => Some(SpriteConfig {
             variations: 5,
-            wind_sway: 1.0,
+            wind_sway: 0.1,
         }),
 
         BlockKind::Apple => Some(SpriteConfig {
@@ -129,7 +129,7 @@ fn sprite_config_for(kind: BlockKind) -> Option<SpriteConfig> {
         BlockKind::Liana => Some(SpriteConfig {
             variations: 2,
             wind_sway: 0.01,
-        }),    
+        }),
         _ => None,
     }
 }
@@ -339,6 +339,14 @@ impl Terrain {
                     make_model("voxygen.voxel.sprite.grass.grass_long_5"),
                 ),
                 (
+                    (BlockKind::LongGrass, 5),
+                    make_model("voxygen.voxel.sprite.grass.grass_long_6"),
+                ),
+                (
+                    (BlockKind::LongGrass, 6),
+                    make_model("voxygen.voxel.sprite.grass.grass_long_7"),
+                ),
+                (
                     (BlockKind::MediumGrass, 0),
                     make_model("voxygen.voxel.sprite.grass.grass_med_1"),
                 ),
@@ -426,7 +434,6 @@ impl Terrain {
                     (BlockKind::Liana, 1),
                     make_model("voxygen.voxel.sprite.lianas.liana-1"),
                 ),
-                
             ]
             .into_iter()
             .collect(),
