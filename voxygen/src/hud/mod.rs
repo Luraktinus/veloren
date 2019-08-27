@@ -14,6 +14,7 @@ mod spell;
 
 pub use settings_window::ScaleChange;
 
+use chrono::NaiveTime;
 use bag::Bag;
 use buttons::Buttons;
 use character_window::CharacterWindow;
@@ -94,6 +95,7 @@ widget_ids! {
         coordinates,
         velocity,
         loaded_distance,
+        time,
 
         // Game Version
         version,
@@ -156,7 +158,7 @@ pub enum Event {
     ChangeFOV(u16),
     CrosshairTransp(f32),
     CrosshairType(CrosshairType),
-    ToggleXpBar(XpBar),    
+    ToggleXpBar(XpBar),
     ToggleBarNumbers(BarNumbers),
     ToggleShortcutNumbers(ShortcutNumbers),
     UiScale(ScaleChange),
@@ -622,7 +624,23 @@ impl Hud {
             .font_id(self.fonts.opensans)
             .font_size(14)
             .set(self.ids.loaded_distance, ui_widgets);
+            // Time
+            let time_in_seconds = client.state().get_time_of_day();
+            let current_time = NaiveTime::from_num_seconds_from_midnight_opt(
+                // Wraps around back to 0s if it exceeds 24 hours (24 hours = 86400s)
+                (time_in_seconds as u64 % 86400) as u32,
+                0,
+            );           
+            Text::new(&format!("Time: {}", current_time.format("%H:%M").to_string()))
+                .color(TEXT_COLOR)
+                .down_from(self.ids.loaded_distance, 5.0)
+                .font_id(self.fonts.opensans)
+                .font_size(14)
+                .set(self.ids.time, ui_widgets);
         }
+
+
+
 
         // Add Bag-Space Button.
         if self.show.inventory_test_button {
@@ -784,7 +802,7 @@ impl Hud {
                     }
                     settings_window::Event::ToggleXpBar(xp_bar) => {
                         events.push(Event::ToggleXpBar(xp_bar));
-                    }                    
+                    }
                     settings_window::Event::ToggleBarNumbers(bar_numbers) => {
                         events.push(Event::ToggleBarNumbers(bar_numbers));
                     }

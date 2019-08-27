@@ -28,6 +28,7 @@ pub enum BlockKind {
     ShortGrass,
     Apple,
     Mushroom,
+    Liana,
 }
 
 impl BlockKind {
@@ -52,6 +53,7 @@ impl BlockKind {
             BlockKind::ShortGrass => true,
             BlockKind::Apple => true,
             BlockKind::Mushroom => true,
+            BlockKind::Liana => true,
             _ => false,
         }
     }
@@ -85,6 +87,7 @@ impl BlockKind {
             BlockKind::ShortGrass => false,
             BlockKind::Apple => false,
             BlockKind::Mushroom => false,
+            BlockKind::Liana => false,
             _ => true,
         }
     }
@@ -111,6 +114,7 @@ impl BlockKind {
             BlockKind::ShortGrass => false,
             BlockKind::Apple => true,
             BlockKind::Mushroom => false,
+            BlockKind::Liana => false,
             _ => true,
         }
     }

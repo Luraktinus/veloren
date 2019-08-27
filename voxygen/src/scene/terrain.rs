@@ -5,6 +5,7 @@ use crate::{
         SpritePipeline, TerrainLocals, TerrainPipeline,
     },
 };
+
 use client::Client;
 use common::{
     assets,
@@ -125,6 +126,10 @@ fn sprite_config_for(kind: BlockKind) -> Option<SpriteConfig> {
             variations: 10,
             wind_sway: 0.0,
         }),
+        BlockKind::Liana => Some(SpriteConfig {
+            variations: 2,
+            wind_sway: 0.01,
+        }),    
         _ => None,
     }
 }
@@ -412,6 +417,14 @@ impl Terrain {
                 (
                     (BlockKind::Mushroom, 9),
                     make_model("voxygen.voxel.sprite.mushrooms.mushroom-9"),
+                ),
+                (
+                    (BlockKind::Liana, 0),
+                    make_model("voxygen.voxel.sprite.lianas.liana-0"),
+                ),
+                (
+                    (BlockKind::Liana, 1),
+                    make_model("voxygen.voxel.sprite.lianas.liana-1"),
                 ),
                 
             ]
