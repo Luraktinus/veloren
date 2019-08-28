@@ -180,10 +180,10 @@ impl Default for AudioSettings {
     fn default() -> Self {
         Self {
             master_volume: 1.0,
-            music_volume: 0.5,
-            sfx_volume: 0.5,
+            music_volume: 0.4,
+            sfx_volume: 0.6,
             audio_device: None,
-            audio_on: true,
+            audio_on: false,
         }
     }
 }
