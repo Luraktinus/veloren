@@ -760,7 +760,9 @@ impl FigureMgr {
                         _ => continue,
                     };
 
-                    if last_character.0.movement != character.movement {
+                    if std::mem::discriminant(&last_character.0.movement)
+                        != std::mem::discriminant(&character.movement)
+                    {
                         state.last_movement_change = Instant::now();
                     }
 
@@ -807,7 +809,9 @@ impl FigureMgr {
                         _ => continue,
                     };
 
-                    if last_character.0.movement != character.movement {
+                    if std::mem::discriminant(&last_character.0.movement)
+                        != std::mem::discriminant(&character.movement)
+                    {
                         state.last_movement_change = Instant::now();
                     }
 
