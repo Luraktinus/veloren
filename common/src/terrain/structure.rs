@@ -115,7 +115,7 @@ impl Asset for Structure {
                     5 => StructureBlock::Mangrove,
                     6 => StructureBlock::GreenSludge,
                     7 => StructureBlock::Fruit,
-                    9 => StructureBlock::Liana,                    
+                    9 => StructureBlock::Liana,
                     15 => StructureBlock::Hollow,
                     index => {
                         let color = palette

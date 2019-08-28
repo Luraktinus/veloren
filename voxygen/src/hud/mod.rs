@@ -14,11 +14,11 @@ mod spell;
 
 pub use settings_window::ScaleChange;
 
-use chrono::NaiveTime;
 use bag::Bag;
 use buttons::Buttons;
 use character_window::CharacterWindow;
 use chat::Chat;
+use chrono::NaiveTime;
 use esc_menu::EscMenu;
 use img_ids::Imgs;
 use map::Map;
@@ -630,17 +630,17 @@ impl Hud {
                 // Wraps around back to 0s if it exceeds 24 hours (24 hours = 86400s)
                 (time_in_seconds as u64 % 86400) as u32,
                 0,
-            );           
-            Text::new(&format!("Time: {}", current_time.format("%H:%M").to_string()))
-                .color(TEXT_COLOR)
-                .down_from(self.ids.loaded_distance, 5.0)
-                .font_id(self.fonts.opensans)
-                .font_size(14)
-                .set(self.ids.time, ui_widgets);
+            );
+            Text::new(&format!(
+                "Time: {}",
+                current_time.format("%H:%M").to_string()
+            ))
+            .color(TEXT_COLOR)
+            .down_from(self.ids.loaded_distance, 5.0)
+            .font_id(self.fonts.opensans)
+            .font_size(14)
+            .set(self.ids.time, ui_widgets);
         }
-
-
-
 
         // Add Bag-Space Button.
         if self.show.inventory_test_button {

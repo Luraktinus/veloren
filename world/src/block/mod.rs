@@ -561,7 +561,7 @@ fn block_from_structure(
         )),
         StructureBlock::Fruit => Some(Block::new(BlockKind::Apple, Rgb::new(194, 30, 37))),
         StructureBlock::Liana => Some(Block::new(
-            BlockKind::Liana, 
+            BlockKind::Liana,
             Lerp::lerp(
                 Rgb::new(0.0, 125.0, 107.0),
                 Rgb::new(0.0, 155.0, 129.0),
@@ -577,7 +577,7 @@ fn block_from_structure(
                 lerp,
             )
             .map(|e| e as u8),
-        )),        
+        )),
         StructureBlock::Hollow => Some(Block::empty()),
         StructureBlock::Normal(color) => {
             Some(Block::new(default_kind, color)).filter(|block| !block.is_empty())

@@ -1,6 +1,5 @@
 use super::{
-    img_ids::Imgs, BarNumbers, CrosshairType, Fonts, ShortcutNumbers, Show, XpBar,
-    TEXT_COLOR,
+    img_ids::Imgs, BarNumbers, CrosshairType, Fonts, ShortcutNumbers, Show, XpBar, TEXT_COLOR,
 };
 use crate::{
     audio::base::Genre,
@@ -144,7 +143,7 @@ pub struct State {
 pub enum Event {
     ToggleHelp,
     ToggleDebug,
-    ToggleXpBar(XpBar),    
+    ToggleXpBar(XpBar),
     ToggleBarNumbers(BarNumbers),
     ToggleShortcutNumbers(ShortcutNumbers),
     ChangeTab(SettingsTab),
@@ -642,7 +641,7 @@ impl<'a> Widget for SettingsWindow<'a> {
                 .font_id(self.fonts.opensans)
                 .graphics_for(state.ids.show_xpbar_button)
                 .color(TEXT_COLOR)
-                .set(state.ids.show_xpbar_text, ui);            
+                .set(state.ids.show_xpbar_text, ui);
             // Show Shortcut Numbers
             if Button::image(match self.global_state.settings.gameplay.shortcut_numbers {
                 ShortcutNumbers::On => self.imgs.checkbox_checked,

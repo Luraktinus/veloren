@@ -341,7 +341,7 @@ impl PlayState for SessionState {
                     HudEvent::ToggleXpBar(xp_bar) => {
                         global_state.settings.gameplay.xp_bar = xp_bar;
                         global_state.settings.save_to_file_warn();
-                    }                    
+                    }
                     HudEvent::ToggleBarNumbers(bar_numbers) => {
                         global_state.settings.gameplay.bar_numbers = bar_numbers;
                         global_state.settings.save_to_file_warn();
