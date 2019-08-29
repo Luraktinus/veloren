@@ -13,7 +13,7 @@ use client::Client;
 use common::{
     assets,
     comp::{
-        humanoid, item::Tool, object, quadruped, quadruped_medium, ActionState::*, Animation, Body,
+        humanoid, item::Tool, object, quadruped, quadruped_medium, ActionState::*, Body,
         CharacterState, Last, MovementState::*, Ori, Pos, Scale, Stats, Vel,
     },
     figure::Segment,
